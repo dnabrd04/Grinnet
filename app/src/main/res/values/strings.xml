@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Grinnet</string>
+    <string name="homeButton">Boton para ir a inicio</string>
+    <string name="searchButton">Boton para ir a busquedas</string>
+    <string name="notificationButton">Boton para ir a notificaciones</string>
+    <string name="chatButton">Boton para ir a chats</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

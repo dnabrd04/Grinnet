@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Grinnet</string>
+    <string name="homeButton">Button to go to home page</string>
+    <string name="searchButton">Button to go to search</string>
+    <string name="notificationButton">Button to go to notifications</string>
+    <string name="chatButton">Button to go to chat</string>
+</resources>
