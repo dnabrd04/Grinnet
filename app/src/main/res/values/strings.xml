@@ -4,6 +4,10 @@
     <string name="searchButton">Boton para ir a busquedas</string>
     <string name="notificationButton">Boton para ir a notificaciones</string>
     <string name="chatButton">Boton para ir a chats</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mailInput">Correo electrónico</string>
+    <string name="passwordInput">Contraseña</string>
+    <string name="loginButton">Acceder</string>
+    <string name="signupButton">Registrarse</string>
+    <string name="googleButton">Continuar con Google</string>
+    <string name="loginTitle">Acceder a Grinnet</string>
 </resources>

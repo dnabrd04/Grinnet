@@ -5,4 +5,10 @@
     <string name="searchButton">Button to go to search</string>
     <string name="notificationButton">Button to go to notifications</string>
     <string name="chatButton">Button to go to chat</string>
+    <string name="mailInput">Mail</string>
+    <string name="passwordInput">Password</string>
+    <string name="loginButton">Log in</string>
+    <string name="signupButton">Sign up</string>
+    <string name="googleButton">Continue with Google</string>
+    <string name="loginTitle">Access Grinnet</string>
 </resources>
