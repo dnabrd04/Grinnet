@@ -1,6 +1,5 @@
 package com.example.grinnet
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -12,10 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
 
 /**
  * Class that controls the authentication system for the users.
@@ -47,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
      */
     fun loadFirebaseAuthenticator(){
         val buttonSignup = findViewById<Button>( R.id.buttonSignup )
-        val buttonLogin = findViewById<Button>( R.id.buttonSignup )
+        val buttonLogin = findViewById<Button>( R.id.buttonLogin )
         val emailInput = findViewById<EditText>( R.id.emailInput )
         val passwordInput = findViewById<EditText>( R.id.passwordInput )
 

@@ -69,7 +69,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/intensePrimary"
                 android:fallbackLineSpacing="false"
-                android:text="@string/signupButton"
+                android:text="@string/loginButton"
                 android:textColor="@color/black" />
 
             <Button
@@ -80,7 +80,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/intensePrimary"
-                android:text="@string/loginButton"
+                android:text="@string/signupButton"
                 android:textColor="@color/black" />
         </LinearLayout>
 
