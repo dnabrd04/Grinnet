@@ -11,4 +11,8 @@
     <string name="signupButton">Sign up</string>
     <string name="googleButton">Continue with Google</string>
     <string name="loginTitle">Access Grinnet</string>
+
+    <string name="alertAcceptButton">Accept</string>
+    <string name="alertErrorTitle">Error</string>
+    <string name="alertErrorMessage">User authentication failed.</string>
 </resources>

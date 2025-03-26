@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
@@ -45,6 +47,7 @@ class LoginActivity : AppCompatActivity() {
     fun loadFirebaseAuthenticator(){
         val buttonSignup = findViewById<Button>( R.id.buttonSignup )
         val buttonLogin = findViewById<Button>( R.id.buttonLogin )
+        val buttonGoogle = findViewById<Button>( R.id.buttonGoogle )
         val emailInput = findViewById<EditText>( R.id.emailInput )
         val passwordInput = findViewById<EditText>( R.id.passwordInput )
 
@@ -58,7 +61,7 @@ class LoginActivity : AppCompatActivity() {
                         if( it.isSuccessful ){
                             goToHome()
                         } else {
-
+                            showAlert()
                         }
                     }
             }
@@ -75,19 +78,37 @@ class LoginActivity : AppCompatActivity() {
                             goToHome()
                             it.result.user
                         } else {
-
+                            showAlert()
                         }
                     }
             }
+        }
+
+        buttonGoogle.setOnClickListener {
+//            GoogleIdTokenCredential.createFrom(credential.data)
+//            googleIdTokenCredential.idToken
         }
     }
 
     /**
      * Launch the main activity.
      */
-    fun goToHome(){
+    private fun goToHome(){
         val intent = Intent( this, MainActivity::class.java )
         startActivity( intent )
+    }
+
+    /**
+     * Launches an error alert dialog. Saying that
+     * an error occurred while authenticating.
+     */
+    private fun showAlert(){
+        val alertBuilder = AlertDialog.Builder( this )
+        alertBuilder.setTitle( getString( R.string.alertErrorTitle ) )
+        alertBuilder.setMessage( getString( R.string.alertErrorMessage ) )
+        alertBuilder.setPositiveButton( "", null )
+        val alertDialog = alertBuilder.create()
+        alertDialog.show()
     }
 
     /**

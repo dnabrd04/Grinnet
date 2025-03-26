@@ -10,4 +10,10 @@
     <string name="signupButton">Registrarse</string>
     <string name="googleButton">Continuar con Google</string>
     <string name="loginTitle">Acceder a Grinnet</string>
+
+
+    <string name="alertAcceptButton">Aceptar</string>
+    <string name="alertErrorTitle">Error</string>
+    <string name="alertErrorMessage">Error al autenticar al usuario.</string>
+
 </resources>
