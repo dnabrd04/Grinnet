@@ -15,6 +15,8 @@ import androidx.security.crypto.MasterKey
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 /**
  * Class that controls the authentication system for the users.
@@ -23,6 +25,8 @@ import com.google.firebase.auth.FirebaseUser
  * @date 23/03/2025
  */
 class LoginActivity : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
 
     /**
      * Executed when the activity is created
@@ -37,8 +41,18 @@ class LoginActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        auth = Firebase.auth
 
         loadFirebaseAuthenticator()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = auth.currentUser
+
+        if( currentUser != null ){
+            goToHome()
+        }
     }
 
     /**
@@ -48,14 +62,13 @@ class LoginActivity : AppCompatActivity() {
         val buttonSignup = findViewById<Button>( R.id.buttonSignup )
         val buttonLogin = findViewById<Button>( R.id.buttonLogin )
         val buttonGoogle = findViewById<Button>( R.id.buttonGoogle )
-        val emailInput = findViewById<EditText>( R.id.emailInput )
-        val passwordInput = findViewById<EditText>( R.id.passwordInput )
+        val email = findViewById<EditText>( R.id.emailInput ).text
+        val password = findViewById<EditText>( R.id.passwordInput ).text
 
         buttonSignup.setOnClickListener {
 
-            if( emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty() ){
-                FirebaseAuth.getInstance()
-                    .createUserWithEmailAndPassword( emailInput.text.toString(), passwordInput.text.toString() )
+            if( email.isNotEmpty() && password.isNotEmpty() ){
+                auth.createUserWithEmailAndPassword( email.toString(), password.toString() )
                     .addOnCompleteListener{
 
                         if( it.isSuccessful ){
@@ -69,14 +82,12 @@ class LoginActivity : AppCompatActivity() {
 
         buttonLogin.setOnClickListener {
 
-            if( emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty() ){
-                FirebaseAuth.getInstance()
-                    .signInWithEmailAndPassword( emailInput.text.toString(), passwordInput.text.toString() )
+            if( email.isNotEmpty() && password.isNotEmpty() ){
+                auth.signInWithEmailAndPassword( email.toString(), password.toString() )
                     .addOnCompleteListener{
 
                         if( it.isSuccessful ){
                             goToHome()
-                            it.result.user
                         } else {
                             showAlert()
                         }
