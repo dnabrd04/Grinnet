@@ -10,13 +10,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.NoCredentialException
+import androidx.lifecycle.lifecycleScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+
 
 /**
  * Class that controls the authentication system for the users.
@@ -27,6 +38,9 @@ import com.google.firebase.ktx.Firebase
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private var googleIdTokenCredential: GoogleIdTokenCredential? = null
+    private lateinit var request: GetCredentialRequest
+//    private lateinit var signInRequest:
 
     /**
      * Executed when the activity is created
@@ -43,6 +57,23 @@ class LoginActivity : AppCompatActivity() {
         }
         auth = Firebase.auth
 
+
+        // Configure the Google ID option
+        val googleIdOption = GetGoogleIdOption.Builder()
+            .setServerClientId(getString(R.string.IdWebClient)) // ID de cliente web de tu servidor
+            .build()
+
+
+        // Creates the credentials request
+        request = GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
+
+
+
+
+
+
         loadFirebaseAuthenticator()
     }
 
@@ -52,6 +83,21 @@ class LoginActivity : AppCompatActivity() {
 
         if( currentUser != null ){
             goToHome()
+        } else {
+            val credentialManagerClient = CredentialManager.create(this)
+
+            lifecycleScope.launch {
+                try {
+                    val customCredential = credentialManagerClient.getCredential(this@LoginActivity, request)
+                    val credential = customCredential.credential
+
+                    if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                        googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                    }
+                } catch (e: NoCredentialException) {
+                    e.printStackTrace()
+                }
+            }
         }
     }
 
@@ -96,8 +142,23 @@ class LoginActivity : AppCompatActivity() {
         }
 
         buttonGoogle.setOnClickListener {
-//            GoogleIdTokenCredential.createFrom(credential.data)
-//            googleIdTokenCredential.idToken
+            val idToken = googleIdTokenCredential?.idToken
+
+            if( idToken != null ){
+                val firebaseCredential = GoogleAuthProvider.getCredential( idToken, null )
+
+                // Inicia sesión en Firebase con dicha credencial
+                Firebase.auth.signInWithCredential( firebaseCredential )
+                    .addOnCompleteListener { task ->
+                        if ( task.isSuccessful ) {
+                            // La autenticación fue exitosa
+                            val user = Firebase.auth.currentUser
+                            // Aquí puedes actualizar la UI o guardar información del usuario
+                        } else {
+                            // Hubo un error en la autenticación, maneja el error (por ejemplo, muestra un mensaje)
+                        }
+                    }
+            }
         }
     }
 

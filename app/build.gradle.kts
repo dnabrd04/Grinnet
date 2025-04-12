@@ -50,11 +50,12 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(platform(libs.firebase.bom))
-    implementation(libs.google.firebase.auth)
+//    implementation(libs.google.firebase.auth)
     implementation(libs.kotlin.stdlib.jdk8)
     implementation(libs.play.services.auth)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.google.firebase.auth.ktx)
 }
