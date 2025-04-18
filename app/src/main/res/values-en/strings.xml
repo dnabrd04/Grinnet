@@ -15,4 +15,7 @@
     <string name="alertAcceptButton">Accept</string>
     <string name="alertErrorTitle">Error</string>
     <string name="alertErrorMessage">User authentication failed.</string>
+    <string name="closeButton">⨉</string>
+    <string name="publishButton">Publish</string>
+    <string name="postTextHint">Type the text of the publication</string>
 </resources>

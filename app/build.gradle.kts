@@ -58,4 +58,10 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.firebase.crashlytics)
     implementation(libs.google.firebase.auth.ktx)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.gson)
 }
