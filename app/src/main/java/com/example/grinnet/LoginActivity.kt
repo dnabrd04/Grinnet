@@ -19,6 +19,8 @@ import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.lifecycleScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.example.grinnet.data.UserRequest
+import com.example.grinnet.data.UserResponse
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -29,6 +31,10 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 
 
 /**
@@ -69,6 +75,10 @@ class LoginActivity : AppCompatActivity() {
         loadFirebaseAuthenticator()
     }
 
+    /**
+     * Initialize all the user interface elements
+     * that will be used throughout the activity.
+     */
     private fun initializeUIElements() {
         buttonSignup = findViewById<Button>( R.id.buttonSignup )
         buttonLogin = findViewById<Button>( R.id.buttonLogin )
@@ -115,7 +125,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     /**
-     * Log in or sign up with firebase authenticator
+     * Load all application access methods
      */
     fun loadFirebaseAuthenticator(){
         val email = email.text
@@ -128,6 +138,7 @@ class LoginActivity : AppCompatActivity() {
                     .addOnCompleteListener{
 
                         if( it.isSuccessful ){
+                            createUser(auth.currentUser!!.uid)
                             goToHome()
                         } else {
                             showAlert()
@@ -153,23 +164,6 @@ class LoginActivity : AppCompatActivity() {
 
         buttonGoogle.setOnClickListener {
             launchGoogleSignIn()
-//            val idToken = googleIdTokenCredential?.idToken
-//
-//            if( idToken != null ){
-//                val firebaseCredential = GoogleAuthProvider.getCredential( idToken, null )
-//
-//                // Inicia sesión en Firebase con dicha credencial
-//                Firebase.auth.signInWithCredential( firebaseCredential )
-//                    .addOnCompleteListener { task ->
-//                        if ( task.isSuccessful ) {
-//                            // La autenticación fue exitosa
-//                            val user = Firebase.auth.currentUser
-//                            // Aquí puedes actualizar la UI o guardar información del usuario
-//                        } else {
-//                            // Hubo un error en la autenticación, maneja el error (por ejemplo, muestra un mensaje)
-//                        }
-//                    }
-//            }
         }
     }
 
@@ -224,7 +218,29 @@ class LoginActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     if (user != null) {
                         // Verificar si el usuario existe en nuestra API
-//                        fetchUserFromApi(user)
+                        val call = getApiUser(user.uid)
+                        call.enqueue(object: Callback<UserResponse> {
+                            override fun onResponse(
+                                call: Call<UserResponse>,
+                                response: Response<UserResponse>
+                            ) {
+                                Log.d("Respuesta Api", response.isSuccessful.toString() + " hola")
+                                if(response.isSuccessful) {
+                                    val responseUser = response.body()
+
+                                    if(responseUser == null) {
+                                        createUser(user.uid)
+                                    }
+                                } else if(response.code() == 404) {
+                                    createUser(user.uid)
+                                }
+                            }
+
+                            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                                Log.d("", t.message!!)
+                            }
+                        })
+
                     }
                     goToHome()
                 } else {
@@ -237,14 +253,35 @@ class LoginActivity : AppCompatActivity() {
      * Launch the main activity.
      */
     private fun goToHome() {
-        getApiUser()
         val intent = Intent( this, MainActivity::class.java )
         startActivity( intent )
         finish()
     }
 
-    private fun getApiUser() {
+    private fun createUser(firebaseId: String) {
+        val user = UserRequest(null, "", "diego", "private", firebaseId, "diego", "Programador")
+        Log.d("", "Creando usuario ${user}")
+        val call = ApiClient.userService.createUser(user)
+            call.enqueue(object : Callback<UserRequest> {
+            override fun onResponse(
+                call: Call<UserRequest>,
+                response: Response<UserRequest>
+            ) {
+                if (response.isSuccessful) {
+                    Log.d("CreateUser", "Usuario creado correctamente: ${response.body()}")
+                } else {
+                    Log.e("CreateUser", "Error al crear usuario: ${response.code()} - ${response.errorBody()?.string()}")
+                }
+            }
 
+            override fun onFailure(call: Call<UserRequest>, t: Throwable) {
+                Log.e("CreateUser", "Fallo en la creación del usuario: ${t.message}")
+            }
+        })
+    }
+
+    private fun getApiUser(firebaseId: String): Call<UserResponse> {
+        return ApiClient.userService.getUserByFirebaseId(firebaseId)
     }
 
     /**
