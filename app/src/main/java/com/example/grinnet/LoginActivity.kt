@@ -15,18 +15,14 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
-import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.lifecycleScope
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import com.example.grinnet.data.UserRequest
 import com.example.grinnet.data.UserResponse
-import com.google.android.gms.auth.api.identity.Identity
+import com.example.grinnet.utils.SessionManager
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -34,7 +30,6 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
 
 
 /**
@@ -80,11 +75,11 @@ class LoginActivity : AppCompatActivity() {
      * that will be used throughout the activity.
      */
     private fun initializeUIElements() {
-        buttonSignup = findViewById<Button>( R.id.buttonSignup )
-        buttonLogin = findViewById<Button>( R.id.buttonLogin )
-        buttonGoogle = findViewById<Button>( R.id.buttonGoogle )
-        email = findViewById<EditText>( R.id.emailInput )
-        password = findViewById<EditText>( R.id.passwordInput )
+        buttonSignup = findViewById( R.id.buttonSignup )
+        buttonLogin = findViewById( R.id.buttonLogin )
+        buttonGoogle = findViewById( R.id.buttonGoogle )
+        email = findViewById( R.id.emailInput )
+        password = findViewById( R.id.passwordInput )
     }
 
     private fun configureGoogleSignIn() {
@@ -127,7 +122,7 @@ class LoginActivity : AppCompatActivity() {
     /**
      * Load all application access methods
      */
-    fun loadFirebaseAuthenticator(){
+    private fun loadFirebaseAuthenticator(){
         val email = email.text
         val password = password.text
 
@@ -154,6 +149,28 @@ class LoginActivity : AppCompatActivity() {
                     .addOnCompleteListener{
 
                         if( it.isSuccessful ){
+                            val call = getApiUser(auth.currentUser!!.uid)
+                            call.enqueue(object: Callback<UserResponse>{
+                                override fun onResponse(
+                                    call: Call<UserResponse>,
+                                    response: Response<UserResponse>
+                                ) {
+                                    if(response.isSuccessful) {
+                                        val responseUser = response.body()
+
+                                        if (responseUser != null) {
+                                            SessionManager.saveUserId(
+                                                this@LoginActivity,
+                                                responseUser.id_user ?: -1L
+                                            )
+                                        }
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                                }
+
+                            })
                             goToHome()
                         } else {
                             showAlert()
@@ -198,7 +215,7 @@ class LoginActivity : AppCompatActivity() {
                         "No se encontraron cuentas de Google. Por favor, agrega una cuenta de Google a tu dispositivo."
                     else -> e.localizedMessage ?: getString(R.string.alertErrorMessage)
                 }
-                Log.e("LoginActivity", "Error en Google Sign-In: ${errorMessage}")
+                Log.e("LoginActivity", "Error en Google Sign-In: $errorMessage")
 
             }
         }
@@ -224,12 +241,13 @@ class LoginActivity : AppCompatActivity() {
                                 call: Call<UserResponse>,
                                 response: Response<UserResponse>
                             ) {
-                                Log.d("Respuesta Api", response.isSuccessful.toString() + " hola")
                                 if(response.isSuccessful) {
                                     val responseUser = response.body()
 
                                     if(responseUser == null) {
                                         createUser(user.uid)
+                                    } else {
+                                        SessionManager.saveUserId(this@LoginActivity, responseUser.id_user ?: -1L)
                                     }
                                 } else if(response.code() == 404) {
                                     createUser(user.uid)
@@ -240,7 +258,6 @@ class LoginActivity : AppCompatActivity() {
                                 Log.d("", t.message!!)
                             }
                         })
-
                     }
                     goToHome()
                 } else {
@@ -258,16 +275,20 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
+    /**
+     * Makes a post call to create the user.
+     */
     private fun createUser(firebaseId: String) {
         val user = UserRequest(null, "", "diego", "private", firebaseId, "diego", "Programador")
-        Log.d("", "Creando usuario ${user}")
+        Log.d("", "Creando usuario $user")
         val call = ApiClient.userService.createUser(user)
-            call.enqueue(object : Callback<UserRequest> {
+        call.enqueue(object : Callback<UserRequest> {
             override fun onResponse(
                 call: Call<UserRequest>,
                 response: Response<UserRequest>
             ) {
                 if (response.isSuccessful) {
+                    SessionManager.saveUserId(this@LoginActivity, response.body()?.id_user ?: -1L)
                     Log.d("CreateUser", "Usuario creado correctamente: ${response.body()}")
                 } else {
                     Log.e("CreateUser", "Error al crear usuario: ${response.code()} - ${response.errorBody()?.string()}")

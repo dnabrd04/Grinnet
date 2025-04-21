@@ -1,5 +1,6 @@
 package com.example.grinnet
 
+import com.example.grinnet.service.PostService
 import com.example.grinnet.service.UserService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,5 +18,9 @@ object ApiClient {
 
     val userService: UserService by lazy {
         instance.create(UserService::class.java)
+    }
+
+    val postService: PostService by lazy {
+        instance.create(PostService::class.java)
     }
 }

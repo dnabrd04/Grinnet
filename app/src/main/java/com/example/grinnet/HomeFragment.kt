@@ -1,12 +1,23 @@
 package com.example.grinnet
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.grinnet.adapter.PostAdapter
+import com.example.grinnet.data.PostResponse
+import com.example.grinnet.data.UserRequest
+import okhttp3.internal.notifyAll
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 /**
  * A simple [Fragment] subclass.
@@ -14,6 +25,10 @@ import android.widget.ImageButton
  * create an instance of this fragment.
  */
 class HomeFragment : Fragment() {
+
+    private lateinit var list: MutableList<PostResponse>
+    private lateinit var postList: RecyclerView
+    private lateinit var adapter: PostAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,16 +40,49 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+        list = mutableListOf<PostResponse>()
+
+        postList = view.findViewById(R.id.postList)
+        adapter = PostAdapter(list, this.requireContext())
+        postList.layoutManager = LinearLayoutManager(requireActivity())
+        postList.adapter = adapter
 
         val addButton = view.findViewById<ImageButton>(R.id.addButton)
         addButton.setOnClickListener {
             showCreatePostView()
         }
 
+        updatePostList()
+
         return view
     }
 
-    private fun showCreatePostView(){
+    private fun updatePostList() {
+        ApiClient.postService.getPosts().enqueue(object: Callback<MutableList<PostResponse>>{
+            override fun onResponse(
+                call: Call<MutableList<PostResponse>>,
+                response: Response<MutableList<PostResponse>>
+            ) {
+                if(response.isSuccessful) {
+                    adapter.updateData(response.body()!!)
+//                    requireActivity().runOnUiThread {
+//                    list.clear()
+//
+//                        list.addAll(response.body()!!)
+////                        adapter.notifyItemInserted(list.size - 1)
+//                    adapter.notifyDataSetChanged()
+//                    }
+                }
+            }
 
+            override fun onFailure(call: Call<MutableList<PostResponse>>, t: Throwable) {
+            }
+
+        })
+    }
+
+    private fun showCreatePostView(){
+        val intent = Intent(requireActivity(), CreatePostActivity::class.java)
+        startActivity(intent)
     }
 }
