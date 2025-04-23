@@ -7,9 +7,12 @@ object SessionManager {
     private const val ID_KEY = "user_id"
     var userId: Long? = null
 
-    fun init(context: Context) {
-        val prefs = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
-        userId = prefs.getLong(ID_KEY, -1L).takeIf { it != -1L }
+    fun init(context: Context): Long? {
+        if(userId == null) {
+            val prefs = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
+            userId = prefs.getLong(ID_KEY, -1L).takeIf { it != -1L }
+        }
+        return userId
     }
 
     fun saveUserId(context: Context, id: Long) {

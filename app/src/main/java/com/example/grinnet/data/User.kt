@@ -28,3 +28,7 @@ data class UserResponse(
 //    val posts: String,
 //    val likes: String,
 )
+
+data class UserEmpty(
+    val id_user: Long
+)

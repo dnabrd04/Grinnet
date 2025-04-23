@@ -8,8 +8,16 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.grinnet.ApiClient
 import com.example.grinnet.R
+import com.example.grinnet.data.Like
 import com.example.grinnet.data.PostResponse
+import com.example.grinnet.data.UserEmpty
+import com.example.grinnet.data.UserResponse
+import com.example.grinnet.utils.SessionManager
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class PostAdapter(private var postList: MutableList<PostResponse>, val context: Context):
     RecyclerView.Adapter<PostAdapter.ViewHolder>() {
@@ -43,17 +51,33 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
             giveLike(post)
         }
 
-        holder.likeButton.setOnClickListener {
-            goCommentActivity(post)
-        }
-
-        holder.likeButton.setOnClickListener {
-            goCreatePostActivity(post)
-        }
+//        holder.likeButton.setOnClickListener {
+//            goCommentActivity(post)
+//        }
+//
+//        holder.likeButton.setOnClickListener {
+//            goCreatePostActivity(post)
+//        }
     }
 
     private fun giveLike(post: PostResponse) {
+        val like =  Like(null,
+                        UserResponse(SessionManager.init(context) ?: -1L,
+                            "", "", "", "", "",
+                            ""),
+                        post)
+        ApiClient.likeService.createLike(like).enqueue(object: Callback<Like> {
+            override fun onResponse(call: Call<Like>, response: Response<Like>) {
+                if(response.isSuccessful) {
+                    Log.d("Respuesta del like", response.body().toString())
+                }
+            }
 
+            override fun onFailure(call: Call<Like>, t: Throwable) {
+                Log.d("Error del like", t.message.toString())
+            }
+
+        })
     }
 
     private fun goCommentActivity(post: PostResponse) {

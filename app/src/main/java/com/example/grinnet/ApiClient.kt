@@ -1,5 +1,6 @@
 package com.example.grinnet
 
+import com.example.grinnet.service.LikeService
 import com.example.grinnet.service.PostService
 import com.example.grinnet.service.UserService
 import retrofit2.Retrofit
@@ -22,5 +23,9 @@ object ApiClient {
 
     val postService: PostService by lazy {
         instance.create(PostService::class.java)
+    }
+
+    val likeService: LikeService by lazy {
+        instance.create(LikeService::class.java)
     }
 }
