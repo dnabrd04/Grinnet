@@ -51,9 +51,9 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
             giveLike(post)
         }
 
-//        holder.likeButton.setOnClickListener {
-//            goCommentActivity(post)
-//        }
+        holder.likeButton.setOnClickListener {
+            goCommentActivity(post)
+        }
 //
 //        holder.likeButton.setOnClickListener {
 //            goCreatePostActivity(post)
@@ -81,7 +81,10 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
     }
 
     private fun goCommentActivity(post: PostResponse) {
-
+        val intent = Intent(this, CreatePostActivity::class.java)
+        intent.putExtra("postRelated", post.id_post)
+        startActivity(intent)
+        finish()
     }
 
     private fun goCreatePostActivity(post: PostResponse) {

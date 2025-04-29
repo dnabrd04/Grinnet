@@ -270,8 +270,8 @@ class LoginActivity : AppCompatActivity() {
      * Launch the main activity.
      */
     private fun goToHome() {
-        val intent = Intent( this, MainActivity::class.java )
-        startActivity( intent )
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
         finish()
     }
 
