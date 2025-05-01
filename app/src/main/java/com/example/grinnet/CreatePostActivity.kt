@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.grinnet.data.PostRelated
 import com.example.grinnet.data.PostRequest
 import com.example.grinnet.data.PostResponse
 import com.example.grinnet.data.UserRequest
@@ -24,7 +25,7 @@ import java.util.Locale
 
 class CreatePostActivity : AppCompatActivity() {
 
-    private var postRelated: Long? = null
+    private var postRelatedValue: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +40,7 @@ class CreatePostActivity : AppCompatActivity() {
         val extras = intent.extras
 
         if(extras != null) {
-            postRelated = extras.getLong("postRelated")
+            postRelatedValue = extras.getLong("postRelated")
         }
 
         val publishButton = findViewById<Button>(R.id.publishButton)
@@ -67,6 +68,7 @@ class CreatePostActivity : AppCompatActivity() {
         val creationPostText = findViewById<EditText>(R.id.creationPostText)
 
         //The creation of the post that will be send to the backend
+        val postRelated = if(postRelatedValue == null) null else PostRelated(postRelatedValue)
         val postRequest = PostRequest(null, userRequest, postRelated, "public", creationPostText.text.toString(), formattedDate)
         val call = ApiClient.postService.createPost(postRequest)
 

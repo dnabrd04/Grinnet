@@ -15,6 +15,7 @@ import com.example.grinnet.R
 import com.example.grinnet.data.Like
 import com.example.grinnet.data.PostResponse
 import com.example.grinnet.data.UserEmpty
+import com.example.grinnet.data.UserRequest
 import com.example.grinnet.data.UserResponse
 import com.example.grinnet.utils.SessionManager
 import retrofit2.Call
@@ -60,18 +61,20 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         holder.commentButton.setOnClickListener {
             goCommentActivity(post)
         }
-//
-//        holder.likeButton.setOnClickListener {
-//            goCreatePostActivity(post)
-//        }
+
+        holder.replyButton.setOnClickListener {
+            goCreatePostActivity(post)
+        }
     }
 
     private fun giveLike(post: PostResponse) {
-        Log.d("post", post.id_post.toString())
-        val like =  Like(SessionManager.init(context) ?: -1L, post.id_post)
+        val user = UserEmpty(SessionManager.init(context) ?: -1L)
+        Log.d("Prueba de valores de post", post.toString())
+        val like =  Like(user, post)
+
         ApiClient.likeService.createLike(like).enqueue(object: Callback<Like> {
+
             override fun onResponse(call: Call<Like>, response: Response<Like>) {
-                    Log.d("Respuesta del like", response.toString())
                 if(response.isSuccessful) {
                     Log.d("Respuesta del like", response.body().toString())
                 }
@@ -86,12 +89,14 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
 
     private fun goCommentActivity(post: PostResponse) {
         val intent = Intent(context, CreatePostActivity::class.java)
-        intent.putExtra("postRelated", post.id_post)
-//        startActivity(intent)
-//        finish()
+        intent.putExtra("postRelated", post.idPost)
+        context.startActivity(intent)
     }
 
     private fun goCreatePostActivity(post: PostResponse) {
+        val intent = Intent(context, CreatePostActivity::class.java)
+        intent.putExtra("postRelated", post.idPost)
+        context.startActivity(intent)
 
     }
 
