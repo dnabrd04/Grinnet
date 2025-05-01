@@ -13,9 +13,12 @@ data class PostRequest(
 
 data class PostResponse(
     val id_post: Long,
+    val postRelated: PostResponse?,
     val user: UserRequest,
     val post: Long?,
     val privacity: String,
     val text: String,
-    val creation_date: String
+    val creationDate: String,
+    val likeCount: Long,
+    val commentCount: Long
 )

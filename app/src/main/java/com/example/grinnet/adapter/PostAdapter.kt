@@ -1,5 +1,6 @@
 package com.example.grinnet.adapter
 
+import android.content.Intent
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grinnet.ApiClient
+import com.example.grinnet.CreatePostActivity
 import com.example.grinnet.R
 import com.example.grinnet.data.Like
 import com.example.grinnet.data.PostResponse
@@ -24,6 +26,8 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
 
     class ViewHolder(element: View): RecyclerView.ViewHolder(element) {
         val username = element.findViewById<TextView>(R.id.usernamePost)
+        val numLikes = element.findViewById<TextView>(R.id.numLikes)
+        val numComments = element.findViewById<TextView>(R.id.numComments)
         val postContent = element.findViewById<TextView>(R.id.postContentText)
         val likeButton = element.findViewById<ImageButton>(R.id.likeButton)
         val commentButton = element.findViewById<ImageButton>(R.id.commentButton)
@@ -46,12 +50,14 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         val post = postList[position]
         holder.username.text = post.user.username
         holder.postContent.text = post.text
+        holder.numLikes.text = post.likeCount.toString()
+        holder.numComments.text = post.commentCount.toString()
 
         holder.likeButton.setOnClickListener {
             giveLike(post)
         }
 
-        holder.likeButton.setOnClickListener {
+        holder.commentButton.setOnClickListener {
             goCommentActivity(post)
         }
 //
@@ -61,13 +67,11 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
     }
 
     private fun giveLike(post: PostResponse) {
-        val like =  Like(null,
-                        UserResponse(SessionManager.init(context) ?: -1L,
-                            "", "", "", "", "",
-                            ""),
-                        post)
+        Log.d("post", post.id_post.toString())
+        val like =  Like(SessionManager.init(context) ?: -1L, post.id_post)
         ApiClient.likeService.createLike(like).enqueue(object: Callback<Like> {
             override fun onResponse(call: Call<Like>, response: Response<Like>) {
+                    Log.d("Respuesta del like", response.toString())
                 if(response.isSuccessful) {
                     Log.d("Respuesta del like", response.body().toString())
                 }
@@ -81,10 +85,10 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
     }
 
     private fun goCommentActivity(post: PostResponse) {
-        val intent = Intent(this, CreatePostActivity::class.java)
+        val intent = Intent(context, CreatePostActivity::class.java)
         intent.putExtra("postRelated", post.id_post)
-        startActivity(intent)
-        finish()
+//        startActivity(intent)
+//        finish()
     }
 
     private fun goCreatePostActivity(post: PostResponse) {

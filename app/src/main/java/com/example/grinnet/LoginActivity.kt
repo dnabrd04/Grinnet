@@ -43,7 +43,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private var googleIdTokenCredential: GoogleIdTokenCredential? = null
     private lateinit var request: GetCredentialRequest
-//    private lateinit var signInRequest:
     private lateinit var buttonSignup: Button
     private lateinit var buttonLogin: Button
     private lateinit var buttonGoogle: Button

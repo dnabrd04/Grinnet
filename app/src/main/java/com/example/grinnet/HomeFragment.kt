@@ -65,17 +65,12 @@ class HomeFragment : Fragment() {
             ) {
                 if(response.isSuccessful) {
                     adapter.updateData(response.body()!!)
-//                    requireActivity().runOnUiThread {
-//                    list.clear()
-//
-//                        list.addAll(response.body()!!)
-////                        adapter.notifyItemInserted(list.size - 1)
-//                    adapter.notifyDataSetChanged()
-//                    }
+                    Log.d("Respuesta Api Publicaciones", response.body().toString())
                 }
             }
 
             override fun onFailure(call: Call<MutableList<PostResponse>>, t: Throwable) {
+                Log.d("Error api", t.message.toString())
             }
 
         })
