@@ -3,7 +3,7 @@ package com.example.grinnet.data
 import java.util.Date
 
 data class PostRequest(
-    val id_post: Long? = null,
+    val idPost: Long? = null,
     val user: UserRequest,
     val post: PostRelated?,
     val privacity: String,
@@ -13,9 +13,8 @@ data class PostRequest(
 
 data class PostResponse(
     val idPost: Long,
-    val postRelated: PostResponse?,
     val user: UserRequest,
-    val post: Long?,
+    val post: PostRelated?,
     val privacity: String,
     val text: String,
     val creationDate: String,
@@ -24,5 +23,5 @@ data class PostResponse(
 )
 
 data class PostRelated(
-    val id_post: Long?
+    val idPost: Long?
 )

@@ -65,7 +65,10 @@ class HomeFragment : Fragment() {
             ) {
                 if(response.isSuccessful) {
                     adapter.updateData(response.body()!!)
-                    Log.d("Respuesta Api Publicaciones", response.body().toString())
+                    val list = response.body() as List<PostResponse>
+                    for(element in list) {
+                        Log.d("Respuesta del like", element.toString())
+                    }
                 }
             }
 
