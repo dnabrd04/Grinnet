@@ -15,8 +15,6 @@ import com.example.grinnet.R
 import com.example.grinnet.data.Like
 import com.example.grinnet.data.PostResponse
 import com.example.grinnet.data.UserEmpty
-import com.example.grinnet.data.UserRequest
-import com.example.grinnet.data.UserResponse
 import com.example.grinnet.utils.SessionManager
 import retrofit2.Call
 import retrofit2.Callback

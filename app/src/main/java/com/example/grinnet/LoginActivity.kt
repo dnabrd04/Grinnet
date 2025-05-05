@@ -160,7 +160,7 @@ class LoginActivity : AppCompatActivity() {
                                         if (responseUser != null) {
                                             SessionManager.saveUserId(
                                                 this@LoginActivity,
-                                                responseUser.id_user ?: -1L
+                                                responseUser.idUser ?: -1L
                                             )
                                         }
                                     }
@@ -246,7 +246,7 @@ class LoginActivity : AppCompatActivity() {
                                     if(responseUser == null) {
                                         createUser(user.uid)
                                     } else {
-                                        SessionManager.saveUserId(this@LoginActivity, responseUser.id_user ?: -1L)
+                                        SessionManager.saveUserId(this@LoginActivity, responseUser.idUser ?: -1L)
                                     }
                                 } else if(response.code() == 404) {
                                     createUser(user.uid)
@@ -287,7 +287,7 @@ class LoginActivity : AppCompatActivity() {
                 response: Response<UserRequest>
             ) {
                 if (response.isSuccessful) {
-                    SessionManager.saveUserId(this@LoginActivity, response.body()?.id_user ?: -1L)
+                    SessionManager.saveUserId(this@LoginActivity, response.body()?.idUser ?: -1L)
                     Log.d("CreateUser", "Usuario creado correctamente: ${response.body()}")
                 } else {
                     Log.e("CreateUser", "Error al crear usuario: ${response.code()} - ${response.errorBody()?.string()}")

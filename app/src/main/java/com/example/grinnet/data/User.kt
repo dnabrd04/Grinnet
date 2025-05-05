@@ -4,7 +4,7 @@ package com.example.grinnet.data
  * Model used to create users through the api.
  */
 data class UserRequest(
-    val id_user: Long? = null,
+    val idUser: Long? = null,
     val image: String,
     val username: String,
     val privacity: String,
@@ -17,7 +17,7 @@ data class UserRequest(
  * Model used to get users through the api.
  */
 data class UserResponse(
-    val id_user: Long? = null,
+    val idUser: Long? = null,
     val image: String,
     val username: String,
     val privacity: String,
@@ -30,5 +30,5 @@ data class UserResponse(
 )
 
 data class UserEmpty(
-    val id_user: Long
+    val idUser: Long
 )
