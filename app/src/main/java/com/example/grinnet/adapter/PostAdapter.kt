@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grinnet.ApiClient
@@ -24,6 +25,7 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
     RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     class ViewHolder(element: View): RecyclerView.ViewHolder(element) {
+        val userImage = element.findViewById<ImageView>(R.id.imageUserPost)
         val username = element.findViewById<TextView>(R.id.usernamePost)
         val numLikes = element.findViewById<TextView>(R.id.numLikes)
         val numComments = element.findViewById<TextView>(R.id.numComments)
@@ -51,6 +53,12 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         holder.postContent.text = post.text
         holder.numLikes.text = post.likeCount.toString()
         holder.numComments.text = post.commentCount.toString()
+
+        if (post.user.image == "") {
+            holder.userImage.setImageResource(R.drawable.account_icon)
+        } else {
+//            holder.userImage.setImageResource()
+        }
 
         holder.likeButton.setOnClickListener {
             giveLike(post)
