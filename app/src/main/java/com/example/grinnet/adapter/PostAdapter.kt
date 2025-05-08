@@ -82,11 +82,7 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
 
             override fun onResponse(call: Call<Like>, response: Response<Like>) {
                 if(response.isSuccessful) {
-
-                    val list = response.body() as List<PostResponse>
-                    for(i in 0..list.size) {
-                        Log.d("Respuesta del like", list[i].toString())
-                    }
+                    Log.d("Respuesta del like", response.toString())
                 }
             }
 
