@@ -16,6 +16,7 @@ import com.example.grinnet.data.UserRequest
 import com.example.grinnet.utils.SessionManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,6 +27,9 @@ import java.util.Locale
 class CreatePostActivity : AppCompatActivity() {
 
     private var postRelatedValue: Long? = null
+    private val storage = Firebase.storage(getString(R.string.BucketURL))
+    private val auth = Firebase.auth
+    private val firebaseId = auth.currentUser!!.uid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
