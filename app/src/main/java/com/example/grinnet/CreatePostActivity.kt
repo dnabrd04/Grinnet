@@ -49,6 +49,7 @@ class CreatePostActivity : AppCompatActivity() {
 
         val publishButton = findViewById<Button>(R.id.publishButton)
         val closeButton = findViewById<Button>(R.id.closeButton)
+        val addImageButton = findViewById<Button>(R.id.addImage)
 
         publishButton.setOnClickListener {
             createPost()
@@ -56,6 +57,12 @@ class CreatePostActivity : AppCompatActivity() {
 
         closeButton.setOnClickListener {
             this.finish()
+        }
+
+        addImageButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                type = "image/* video/*"
+            }
         }
     }
 
