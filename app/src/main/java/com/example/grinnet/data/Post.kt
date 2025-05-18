@@ -19,7 +19,8 @@ data class PostResponse(
     val text: String,
     val creationDate: String,
     val likeCount: Long,
-    val commentCount: Long
+    val commentCount: Long,
+    val liked: Boolean
 )
 
 data class PostRelated(

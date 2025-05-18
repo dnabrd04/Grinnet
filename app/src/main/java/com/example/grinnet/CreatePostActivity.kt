@@ -27,7 +27,7 @@ import java.util.Locale
 class CreatePostActivity : AppCompatActivity() {
 
     private var postRelatedValue: Long? = null
-    private val storage = Firebase.storage(getString(R.string.BucketURL))
+//    private val storage = Firebase.storage(getString(R.string.BucketURL))
     private val auth = Firebase.auth
     private val firebaseId = auth.currentUser!!.uid
 

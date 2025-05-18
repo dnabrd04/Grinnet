@@ -2,6 +2,7 @@ package com.example.grinnet.service
 
 import com.example.grinnet.data.PostRequest
 import com.example.grinnet.data.PostResponse
+import com.example.grinnet.data.UserIdRequest
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -16,6 +17,6 @@ interface PostService {
     @GET("/post/{id}")
     fun getPost(@Path("id") idPost: Long): Call<PostResponse>
 
-    @GET("/post")
-    fun getPosts(): Call<MutableList<PostResponse>>
+    @POST("/post/with-likes")
+    fun getPosts(@Body request: UserIdRequest): Call<MutableList<PostResponse>>
 }

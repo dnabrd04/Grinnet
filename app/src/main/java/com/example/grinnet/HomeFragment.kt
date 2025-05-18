@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grinnet.adapter.PostAdapter
 import com.example.grinnet.data.PostResponse
+import com.example.grinnet.data.UserIdRequest
 import com.example.grinnet.data.UserRequest
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import okhttp3.internal.notifyAll
 import retrofit2.Call
 import retrofit2.Callback
@@ -58,17 +61,27 @@ class HomeFragment : Fragment() {
     }
 
     private fun updatePostList() {
-        ApiClient.postService.getPosts().enqueue(object: Callback<MutableList<PostResponse>>{
+        val firebaseId = Firebase.auth.currentUser?.uid
+        var userIdRequest = UserIdRequest("")
+
+        if (firebaseId != null) {
+            userIdRequest = UserIdRequest(firebaseId)
+        }
+
+        ApiClient.postService.getPosts(userIdRequest).enqueue(object: Callback<MutableList<PostResponse>>{
             override fun onResponse(
                 call: Call<MutableList<PostResponse>>,
                 response: Response<MutableList<PostResponse>>
             ) {
+                Log.d("Respuesta del like", response.body().toString())
                 if(response.isSuccessful) {
                     adapter.updateData(response.body()!!)
                     val list = response.body() as List<PostResponse>
                     for(element in list) {
                         Log.d("Respuesta del like", element.toString())
                     }
+                } else {
+                    Log.d("Respuesta del like", response.errorBody().toString())
                 }
             }
 

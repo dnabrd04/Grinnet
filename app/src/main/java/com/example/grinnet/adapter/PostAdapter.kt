@@ -54,6 +54,10 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         holder.numLikes.text = post.likeCount.toString()
         holder.numComments.text = post.commentCount.toString()
 
+        if (post.liked) {
+            holder.likeButton.setImageResource(R.drawable.favorite_icon)
+        }
+
         if (post.user.image == "") {
             holder.userImage.setImageResource(R.drawable.account_icon)
         } else {
