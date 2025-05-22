@@ -8,7 +8,8 @@ data class PostRequest(
     val post: PostRelated?,
     val privacity: String,
     val text: String,
-    val creation_date: String
+    val creation_date: String,
+    val resources: MutableList<ResourceRequest>
 )
 
 data class PostResponse(
@@ -20,7 +21,8 @@ data class PostResponse(
     val creationDate: String,
     val likeCount: Long,
     val commentCount: Long,
-    val liked: Boolean
+    val liked: Boolean,
+    val resources: MutableList<ResourceResponse>
 )
 
 data class PostRelated(

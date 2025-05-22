@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.grinnet.data.PostRelated
 import com.example.grinnet.data.PostRequest
 import com.example.grinnet.data.PostResponse
+import com.example.grinnet.data.ResourceRequest
 import com.example.grinnet.data.UserRequest
 import com.example.grinnet.utils.SessionManager
 import com.google.firebase.auth.ktx.auth
@@ -40,6 +41,7 @@ class CreatePostActivity : AppCompatActivity() {
     private val auth = Firebase.auth
     private val firebaseId = auth.currentUser!!.uid
     private lateinit var pickImageLauncher: ActivityResultLauncher<Intent>
+    private var resourceList: MutableList<ResourceRequest> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +94,8 @@ class CreatePostActivity : AppCompatActivity() {
                         imageRef.downloadUrl.addOnCompleteListener {
                             uri ->
                             val downloadUrl = uri.toString()
+                            val resourceRequest = ResourceRequest(null, downloadUrl, null, resourceList.size)
+                            resourceList.add(resourceRequest)
                             Toast.makeText(this, "Imagen subida", Toast.LENGTH_SHORT).show()
                         }
                     }.addOnFailureListener {
@@ -123,7 +127,7 @@ class CreatePostActivity : AppCompatActivity() {
 
         //The creation of the post that will be send to the backend
         val postRelated = if(postRelatedValue == null) null else PostRelated(postRelatedValue)
-        val postRequest = PostRequest(null, userRequest, postRelated, "public", creationPostText.text.toString(), formattedDate)
+        val postRequest = PostRequest(null, userRequest, postRelated, "public", creationPostText.text.toString(), formattedDate, resourceList)
         val call = ApiClient.postService.createPost(postRequest)
 
         call.enqueue(object: Callback<PostResponse>{

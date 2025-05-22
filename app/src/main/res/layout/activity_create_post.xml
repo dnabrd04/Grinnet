@@ -46,11 +46,21 @@
         android:id="@+id/creationPostText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="4"
         android:background="@null"
         android:gravity="start|top"
         android:hint="@string/postTextHint"
         android:inputType="textMultiLine" />
+
+    <GridLayout
+        android:id="@+id/imageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:layout_weight="4"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:visibility="visible" />
 
     <LinearLayout
         android:layout_width="match_parent"
