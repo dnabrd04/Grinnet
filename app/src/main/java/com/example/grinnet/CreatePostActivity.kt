@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
@@ -16,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 import com.example.grinnet.data.PostRelated
 import com.example.grinnet.data.PostRequest
 import com.example.grinnet.data.PostResponse
@@ -42,6 +44,7 @@ class CreatePostActivity : AppCompatActivity() {
     private val firebaseId = auth.currentUser!!.uid
     private lateinit var pickImageLauncher: ActivityResultLauncher<Intent>
     private var resourceList: MutableList<ResourceRequest> = mutableListOf()
+    private lateinit var imageContainer: GridLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +69,7 @@ class CreatePostActivity : AppCompatActivity() {
         val publishButton = findViewById<Button>(R.id.publishButton)
         val closeButton = findViewById<Button>(R.id.closeButton)
         val addImageButton = findViewById<ImageButton>(R.id.addImage)
+        imageContainer = findViewById(R.id.imageContainer)
 
         publishButton.setOnClickListener {
             createPost()
@@ -93,9 +97,8 @@ class CreatePostActivity : AppCompatActivity() {
                     uploadTask.addOnSuccessListener {
                         imageRef.downloadUrl.addOnCompleteListener {
                             uri ->
-                            val downloadUrl = uri.toString()
-                            val resourceRequest = ResourceRequest(null, downloadUrl, null, resourceList.size)
-                            resourceList.add(resourceRequest)
+                            addToResourceList(uri.toString())
+                            addViewImage()
                             Toast.makeText(this, "Imagen subida", Toast.LENGTH_SHORT).show()
                         }
                     }.addOnFailureListener {
@@ -104,6 +107,64 @@ class CreatePostActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun addViewImage() {
+        imageContainer.removeAllViews()
+        val totalImages = resourceList.size
+
+        for ((index, image) in resourceList.withIndex()) {
+            val imageView = ImageView(this)
+            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            Glide.with(this).load(image.url).centerCrop().into(imageView)
+            val params = GridLayout.LayoutParams()
+
+            when (totalImages) {
+                1 -> {
+                    params.rowSpec = GridLayout.spec(0)
+                    params.columnSpec = GridLayout.spec(0, 2)
+                    params.width = GridLayout.LayoutParams.MATCH_PARENT
+                    params.height = GridLayout.LayoutParams.MATCH_PARENT
+                }
+                2 -> {
+                    params.rowSpec = GridLayout.spec(0)
+                    params.columnSpec = GridLayout.spec(index)
+                    params.width = GridLayout.LayoutParams.MATCH_PARENT
+                    params.height = GridLayout.LayoutParams.MATCH_PARENT
+                }
+                3 -> {
+                    if (index == 0) {
+                        params.rowSpec = GridLayout.spec(0)
+                        params.columnSpec = GridLayout.spec(0, 2)
+                        params.width = GridLayout.LayoutParams.MATCH_PARENT
+                        params.height = 400
+                    } else {
+                        params.rowSpec = GridLayout.spec(1)
+                        params.columnSpec = GridLayout.spec(index - 1)
+                        params.width = GridLayout.LayoutParams.MATCH_PARENT
+                        params.height = 300
+                    }
+                }
+                4 -> {
+                    params.rowSpec = GridLayout.spec(index / 2)
+                    params.columnSpec = GridLayout.spec(index % 2)
+                    params.width = GridLayout.LayoutParams.MATCH_PARENT
+                    params.height = 300
+                }
+            }
+            imageView.layoutParams = params
+            imageContainer.addView(imageView)
+        }
+    }
+
+    /**
+     * Adds the resource to the list if the list has minus than 4 elements.
+     */
+    private fun addToResourceList(uri: String) {
+        if (resourceList.size == 4) return
+
+        val resourceRequest = ResourceRequest(null, uri, null, resourceList.size)
+        resourceList.add(resourceRequest)
     }
 
     private fun openGallery() {

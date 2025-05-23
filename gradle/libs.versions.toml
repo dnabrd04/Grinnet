@@ -4,6 +4,7 @@ converterGson = "2.9.0"
 coreSplashscreen = "1.0.1"
 credentials = "1.5.0"
 firebaseBom = "33.11.0"
+glide = "4.16.0"
 googleid = "1.1.1"
 gson = "2.10.1"
 kotlin = "2.1.0"
@@ -37,6 +38,7 @@ firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-storage = { module = "com.google.firebase:firebase-storage" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-firebase-auth = { module = "com.google.firebase:firebase-auth" }
 google-firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }

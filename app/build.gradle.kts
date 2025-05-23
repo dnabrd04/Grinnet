@@ -60,6 +60,9 @@ dependencies {
     implementation(libs.google.firebase.auth.ktx)
     implementation(libs.firebase.storage)
 
+    implementation(libs.glide)
+
+
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.okhttp)
