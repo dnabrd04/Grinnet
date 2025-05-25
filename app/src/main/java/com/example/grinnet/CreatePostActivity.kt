@@ -97,7 +97,7 @@ class CreatePostActivity : AppCompatActivity() {
                     uploadTask.addOnSuccessListener {
                         imageRef.downloadUrl.addOnCompleteListener {
                             uri ->
-                            addToResourceList(uri.toString())
+                            addToResourceList(uri.result.toString())
                             addViewImage()
                             Toast.makeText(this, "Imagen subida", Toast.LENGTH_SHORT).show()
                         }
