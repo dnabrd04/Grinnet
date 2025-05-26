@@ -127,29 +127,29 @@ class CreatePostActivity : AppCompatActivity() {
                     params.height = GridLayout.LayoutParams.MATCH_PARENT
                 }
                 2 -> {
-                    params.rowSpec = GridLayout.spec(0)
-                    params.columnSpec = GridLayout.spec(index)
-                    params.width = GridLayout.LayoutParams.MATCH_PARENT
-                    params.height = GridLayout.LayoutParams.MATCH_PARENT
+                    params.rowSpec = GridLayout.spec(0, 1f)
+                    params.columnSpec = GridLayout.spec(index, 1f)
+                    params.width = 0
+                    params.height = 0
                 }
                 3 -> {
                     if (index == 0) {
-                        params.rowSpec = GridLayout.spec(0)
-                        params.columnSpec = GridLayout.spec(0, 2)
-                        params.width = GridLayout.LayoutParams.MATCH_PARENT
-                        params.height = 400
+                        params.rowSpec = GridLayout.spec(0, 2, 1f)
+                        params.columnSpec = GridLayout.spec(0, 1f)
+                        params.width = 0
+                        params.height = 0
                     } else {
-                        params.rowSpec = GridLayout.spec(1)
-                        params.columnSpec = GridLayout.spec(index - 1)
-                        params.width = GridLayout.LayoutParams.MATCH_PARENT
-                        params.height = 300
+                        params.rowSpec = GridLayout.spec(index - 1, 1f)
+                        params.columnSpec = GridLayout.spec(1, 1f)
+                        params.width = 0
+                        params.height = 0
                     }
                 }
                 4 -> {
-                    params.rowSpec = GridLayout.spec(index / 2)
-                    params.columnSpec = GridLayout.spec(index % 2)
-                    params.width = GridLayout.LayoutParams.MATCH_PARENT
-                    params.height = 300
+                    params.rowSpec = GridLayout.spec(index / 2, 1f)
+                    params.columnSpec = GridLayout.spec(index % 2, 1f)
+                    params.width = 0
+                    params.height = 0
                 }
             }
             imageView.layoutParams = params
