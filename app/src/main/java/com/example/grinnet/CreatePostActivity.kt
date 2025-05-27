@@ -24,6 +24,7 @@ import com.example.grinnet.data.PostResponse
 import com.example.grinnet.data.ResourceRequest
 import com.example.grinnet.data.UserRequest
 import com.example.grinnet.utils.SessionManager
+import com.example.grinnet.utils.Utils
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -98,7 +99,8 @@ class CreatePostActivity : AppCompatActivity() {
                         imageRef.downloadUrl.addOnCompleteListener {
                             uri ->
                             addToResourceList(uri.result.toString())
-                            addViewImage()
+                            //addViewImage()
+                            Utils.addViewImage(imageContainer, resourceList, this)
                             Toast.makeText(this, "Imagen subida", Toast.LENGTH_SHORT).show()
                         }
                     }.addOnFailureListener {
@@ -109,7 +111,7 @@ class CreatePostActivity : AppCompatActivity() {
         }
     }
 
-    private fun addViewImage() {
+    /*private fun addViewImage() {
         imageContainer.removeAllViews()
         val totalImages = resourceList.size
 
@@ -155,7 +157,7 @@ class CreatePostActivity : AppCompatActivity() {
             imageView.layoutParams = params
             imageContainer.addView(imageView)
         }
-    }
+    }*/
 
     /**
      * Adds the resource to the list if the list has minus than 4 elements.
