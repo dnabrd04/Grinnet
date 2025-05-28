@@ -12,7 +12,6 @@ import com.example.grinnet.data.ResourceResponse
 object Utils{
 
     fun <T> addViewImage(imageContainer: GridLayout, resourceList: MutableList<T>, context: Context) {
-        imageContainer.visibility = View.VISIBLE
         imageContainer.removeAllViews()
         val totalImages = resourceList.size
 

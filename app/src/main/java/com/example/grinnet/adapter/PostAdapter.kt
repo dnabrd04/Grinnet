@@ -56,9 +56,13 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         holder.postContent.text = post.text
         holder.numLikes.text = post.likeCount.toString()
         holder.numComments.text = post.commentCount.toString()
-        holder.imageContainer.visibility = View.GONE
 
-        if (post.resources != null) Utils.addViewImage(holder.imageContainer, post.resources, context)
+        if (post.resources != null && post.resources.isNotEmpty()) {
+            holder.imageContainer.visibility = View.VISIBLE
+            Utils.addViewImage(holder.imageContainer, post.resources, context)
+        } else {
+            holder.imageContainer.visibility = View.GONE
+        }
 
         if (post.liked) {
             holder.likeButton.setImageResource(R.drawable.favorite_icon)
