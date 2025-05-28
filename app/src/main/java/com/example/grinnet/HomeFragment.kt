@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.grinnet.adapter.OnUserClickListener
 import com.example.grinnet.adapter.PostAdapter
 import com.example.grinnet.data.PostResponse
 import com.example.grinnet.data.UserIdRequest
@@ -27,7 +28,7 @@ import retrofit2.Response
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), OnUserClickListener {
 
     private lateinit var list: MutableList<PostResponse>
     private lateinit var postList: RecyclerView
@@ -46,7 +47,7 @@ class HomeFragment : Fragment() {
         list = mutableListOf<PostResponse>()
 
         postList = view.findViewById(R.id.postList)
-        adapter = PostAdapter(list, this.requireContext())
+        adapter = PostAdapter(list, this.requireContext(), this)
         postList.layoutManager = LinearLayoutManager(requireActivity())
         postList.adapter = adapter
 
@@ -95,5 +96,9 @@ class HomeFragment : Fragment() {
     private fun showCreatePostView(){
         val intent = Intent(requireActivity(), CreatePostActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onUserClick(user: UserRequest) {
+        (activity as MainActivity).changeFragmentToUserProfile(user)
     }
 }

@@ -1,5 +1,7 @@
 package com.example.grinnet.data
 
+import java.io.Serializable
+
 /**
  * Model used to create users through the api.
  */
@@ -11,7 +13,7 @@ data class UserRequest(
     val firebaseId: String,
     val name: String,
     val description: String,
-)
+): Serializable
 
 /**
  * Model used to get users through the api.

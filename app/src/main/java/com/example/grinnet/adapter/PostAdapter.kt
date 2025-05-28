@@ -17,13 +17,14 @@ import com.example.grinnet.R
 import com.example.grinnet.data.Like
 import com.example.grinnet.data.PostResponse
 import com.example.grinnet.data.UserEmpty
+import com.example.grinnet.data.UserRequest
 import com.example.grinnet.utils.SessionManager
 import com.example.grinnet.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PostAdapter(private var postList: MutableList<PostResponse>, val context: Context):
+class PostAdapter(private var postList: MutableList<PostResponse>, val context: Context, private val onUserClickListener: OnUserClickListener):
     RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     class ViewHolder(element: View): RecyclerView.ViewHolder(element) {
@@ -85,6 +86,17 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         holder.replyButton.setOnClickListener {
             goCreatePostActivity(post)
         }
+
+        holder.userImage.setOnClickListener {
+            goUserProfile(post.user)
+        }
+    }
+
+    private fun goUserProfile(user: UserRequest) {
+//        val intent = Intent(context, UserProfileActivity::class.java)
+//        intent.putExtra("user", user)
+//        context.startActivity(intent)
+        onUserClickListener.onUserClick(user)
     }
 
     private fun giveLike(post: PostResponse) {
@@ -125,4 +137,8 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         postList.addAll(newItems)
         notifyDataSetChanged()
     }
+}
+
+interface OnUserClickListener {
+    fun onUserClick(user: UserRequest)
 }
