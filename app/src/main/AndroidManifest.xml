@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Grinnet">
         <activity
+            android:name=".FormUserActivity"
+            android:exported="false" />
+        <activity
             android:name=".UserProfileActivity"
             android:exported="false" />
         <activity

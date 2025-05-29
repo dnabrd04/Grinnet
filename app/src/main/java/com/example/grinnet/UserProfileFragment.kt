@@ -6,6 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 import com.example.grinnet.data.UserRequest
 
 
@@ -34,6 +37,19 @@ class UserProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_user_profile, container, false)
+
+        val imageProfile = view.findViewById<ImageView>(R.id.profileImage)
+        val followButton = view.findViewById<Button>(R.id.followButton)
+        val username = view.findViewById<ImageView>(R.id.username)
+        val description = view.findViewById<ImageView>(R.id.description)
+        val followingCount = view.findViewById<ImageView>(R.id.followingCount)
+        val followerCount = view.findViewById<ImageView>(R.id.followerCount)
+
+        if (user.image != "") {
+            imageProfile.setImageResource(R.drawable.account_icon)
+        } else {
+            Glide.with(this).load(user.image).centerCrop().into(imageProfile)
+        }
 
         return view
     }

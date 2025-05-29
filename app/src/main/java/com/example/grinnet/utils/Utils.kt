@@ -1,11 +1,14 @@
 package com.example.grinnet.utils
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.GridLayout
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.example.grinnet.MainActivity
 import com.example.grinnet.data.ResourceRequest
 import com.example.grinnet.data.ResourceResponse
 
@@ -64,5 +67,14 @@ object Utils{
             imageView.layoutParams = params
             imageContainer.addView(imageView)
         }
+    }
+
+    /**
+     * Launch the main activity.
+     */
+    fun goToHome(context: Context) {
+        val intent = Intent(context, MainActivity::class.java)
+        context.startActivity(intent)
+        (context as Activity).finish()
     }
 }

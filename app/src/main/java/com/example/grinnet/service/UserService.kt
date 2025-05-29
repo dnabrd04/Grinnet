@@ -17,4 +17,7 @@ interface UserService {
 
     @GET("/user/{id}")
     fun getUser(@Path("id") id: Long): Call<UserResponse>
+
+    @GET("/user/username/{username}")
+    fun existsUsername(@Path("username") username: String): Call<Boolean>
 }

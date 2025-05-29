@@ -12,6 +12,12 @@
     <string name="googleButton">Continue with Google</string>
     <string name="loginTitle">Access Grinnet</string>
 
+    <string name="nameInput">Name</string>
+    <string name="usernameInput">Username</string>
+    <string name="descriptionInput">Description</string>
+    <string name="nextButton">Next</string>
+    <string name="usernameExistsError">The user name is already in use</string>
+
     <string name="alertAcceptButton">Accept</string>
     <string name="alertErrorTitle">Error</string>
     <string name="alertErrorMessage">User authentication failed.</string>

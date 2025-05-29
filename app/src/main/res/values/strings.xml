@@ -11,6 +11,11 @@
     <string name="googleButton">Continuar con Google</string>
     <string name="loginTitle">Acceder a Grinnet</string>
 
+    <string name="nameInput">Nombre</string>
+    <string name="usernameInput">Nombre de usuario</string>
+    <string name="descriptionInput">Descripción</string>
+    <string name="nextButton">Siguiente</string>
+    <string name="usernameExistsError">El nombre de usuario ya esta en uso</string>
 
     <string name="alertAcceptButton">Aceptar</string>
     <string name="alertErrorTitle">Error</string>

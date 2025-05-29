@@ -68,7 +68,6 @@
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/intensePrimary"
-                android:fallbackLineSpacing="false"
                 android:text="@string/loginButton"
                 android:textColor="@color/black" />
 

@@ -1,5 +1,7 @@
 package com.example.grinnet
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.grinnet.data.UserRequest
 import com.example.grinnet.data.UserResponse
 import com.example.grinnet.utils.SessionManager
+import com.example.grinnet.utils.Utils
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
@@ -98,24 +101,9 @@ class LoginActivity : AppCompatActivity() {
         super.onStart()
         val currentUser = auth.currentUser
 
-        if( currentUser != null ){
-            goToHome()
-        } /*else {
-            val credentialManagerClient = CredentialManager.create(this)
-
-            lifecycleScope.launch {
-                try {
-                    val customCredential = credentialManagerClient.getCredential(this@LoginActivity, request)
-                    val credential = customCredential.credential
-
-                    if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                        googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                    }
-                } catch (e: NoCredentialException) {
-                    e.printStackTrace()
-                }
-            }
-        }*/
+        if (currentUser != null) {
+            Utils.goToHome(this)
+        }
     }
 
     /**
@@ -132,8 +120,7 @@ class LoginActivity : AppCompatActivity() {
                     .addOnCompleteListener{
 
                         if( it.isSuccessful ){
-                            createUser(auth.currentUser!!.uid)
-                            goToHome()
+                            goToFormUser()
                         } else {
                             showAlert()
                         }
@@ -170,7 +157,7 @@ class LoginActivity : AppCompatActivity() {
                                 }
 
                             })
-                            goToHome()
+                            Utils.goToHome(this)
                         } else {
                             showAlert()
                         }
@@ -244,12 +231,12 @@ class LoginActivity : AppCompatActivity() {
                                     val responseUser = response.body()
 
                                     if(responseUser == null) {
-                                        createUser(user.uid)
+                                        goToFormUser()
                                     } else {
                                         SessionManager.saveUserId(this@LoginActivity, responseUser.idUser ?: -1L)
                                     }
                                 } else if(response.code() == 404) {
-                                    createUser(user.uid)
+                                    goToFormUser()
                                 }
                             }
 
@@ -258,7 +245,7 @@ class LoginActivity : AppCompatActivity() {
                             }
                         })
                     }
-                    goToHome()
+                    Utils.goToHome(this)
                 } else {
 //                    showAlert(task.exception?.message)
                 }
@@ -268,8 +255,9 @@ class LoginActivity : AppCompatActivity() {
     /**
      * Launch the main activity.
      */
-    private fun goToHome() {
-        val intent = Intent(this, MainActivity::class.java)
+    fun goToFormUser() {
+        val intent = Intent(this, FormUserActivity::class.java)
+        intent.putExtra("firebaseId", auth.currentUser?.uid ?: "")
         startActivity(intent)
         finish()
     }
