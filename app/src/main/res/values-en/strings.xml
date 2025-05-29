@@ -18,4 +18,8 @@
     <string name="closeButton">⨉</string>
     <string name="publishButton">Publish</string>
     <string name="postTextHint">Type the text of the publication</string>
+
+    <string name="followButton">Follow</string>
+    <string name="followerText">Followers</string>
+    <string name="followingText">Following</string>
 </resources>
