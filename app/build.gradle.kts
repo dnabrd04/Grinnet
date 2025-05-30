@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.google.firebase.auth.ktx)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.messaging)
 
     implementation(libs.glide)
 
