@@ -120,7 +120,11 @@ class LoginActivity : AppCompatActivity() {
                     .addOnCompleteListener{
 
                         if( it.isSuccessful ){
-                            goToFormUser()
+                            val user = it.result.user
+
+                            if (user != null) {
+                                goToFormUser()
+                            }
                         } else {
                             showAlert()
                         }

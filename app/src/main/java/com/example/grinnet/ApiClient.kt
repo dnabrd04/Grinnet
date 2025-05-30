@@ -1,5 +1,6 @@
 package com.example.grinnet
 
+import com.example.grinnet.service.FollowService
 import com.example.grinnet.service.LikeService
 import com.example.grinnet.service.PostService
 import com.example.grinnet.service.UserService
@@ -36,5 +37,9 @@ object ApiClient {
 
     val likeService: LikeService by lazy {
         instance.create(LikeService::class.java)
+    }
+
+    val followService: FollowService by lazy {
+        instance.create(FollowService::class.java)
     }
 }

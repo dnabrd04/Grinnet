@@ -2,14 +2,23 @@ package com.example.grinnet
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.example.grinnet.data.FollowRequest
+import com.example.grinnet.data.UserEmpty
 import com.example.grinnet.data.UserRequest
+import com.example.grinnet.utils.SessionManager
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.util.Date
 
 
 /**
@@ -40,17 +49,41 @@ class UserProfileFragment : Fragment() {
 
         val imageProfile = view.findViewById<ImageView>(R.id.profileImage)
         val followButton = view.findViewById<Button>(R.id.followButton)
-        val username = view.findViewById<ImageView>(R.id.username)
-        val description = view.findViewById<ImageView>(R.id.description)
-        val followingCount = view.findViewById<ImageView>(R.id.followingCount)
-        val followerCount = view.findViewById<ImageView>(R.id.followerCount)
+        val username = view.findViewById<TextView>(R.id.username)
+        val description = view.findViewById<TextView>(R.id.description)
+        val followingCount = view.findViewById<TextView>(R.id.followingCount)
+        val followerCount = view.findViewById<TextView>(R.id.followerCount)
 
-        if (user.image != "") {
+        username.text = user.username
+        description.text = user.description
+
+        Log.d("Imagen", user.image)
+        if (user.image == "" || user.image.isEmpty()) {
             imageProfile.setImageResource(R.drawable.account_icon)
         } else {
             Glide.with(this).load(user.image).centerCrop().into(imageProfile)
         }
 
+        followButton.setOnClickListener {
+            followThisUser(user, SessionManager.init(requireActivity())!!)
+        }
+
         return view
+    }
+
+    private fun followThisUser (userFollowed: UserRequest, idFollower: Long) {
+        val follow = FollowRequest(null, UserEmpty(idFollower), userFollowed, Date())
+        val call = ApiClient.followService.createFollow(follow)
+        call.enqueue(object : Callback<FollowRequest> {
+            override fun onResponse(call: Call<FollowRequest>, response: Response<FollowRequest>) {
+                if (response.isSuccessful) {
+
+                }
+            }
+
+            override fun onFailure(call: Call<FollowRequest>, t: Throwable) {
+            }
+
+        })
     }
 }
