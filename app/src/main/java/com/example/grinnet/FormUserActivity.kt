@@ -15,6 +15,7 @@ import com.example.grinnet.service.UserService
 import com.example.grinnet.utils.SessionManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -60,7 +61,7 @@ class FormUserActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         Log.d("Respuesta", response.body().toString())
                         if (!response.body()!!) {
-                            createUser(firebaseId)
+                            getTokenPush(firebaseId)
                             goToHome()
                         } else {
                             errorText.text = getString(R.string.usernameExistsError)
@@ -79,10 +80,22 @@ class FormUserActivity : AppCompatActivity() {
     }
 
     /**
+     * Get the token for the push notifications and create the user with the token received
+     */
+    private fun getTokenPush(firebaseId: String) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (it.isSuccessful) {
+                val token = it.result
+                createUser(firebaseId, token)
+            }
+        }
+    }
+
+    /**
      * Makes a post call to create the user.
      */
-    private fun createUser(firebaseId: String) {
-        val user = UserRequest(null, "", editUsername.text.toString(), "public", firebaseId, editName.text.toString(), editDescription.text.toString())
+    private fun createUser(firebaseId: String, token: String) {
+        val user = UserRequest(null, "", editUsername.text.toString(), "public", firebaseId, token, editName.text.toString(), editDescription.text.toString())
         Log.d("", "Creando usuario $user")
         val call = ApiClient.userService.createUser(user)
         call.enqueue(object : Callback<UserRequest> {

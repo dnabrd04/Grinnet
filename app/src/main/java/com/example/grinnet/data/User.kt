@@ -11,6 +11,7 @@ data class UserRequest(
     val username: String,
     val privacity: String,
     val firebaseId: String,
+    val tokenPush: String,
     val name: String,
     val description: String,
 ): Serializable
@@ -24,6 +25,7 @@ data class UserResponse(
     val username: String,
     val privacity: String,
     val firebaseId: String,
+    val tokenPush: String,
     val name: String,
     val description: String,
 //    val comments: String,

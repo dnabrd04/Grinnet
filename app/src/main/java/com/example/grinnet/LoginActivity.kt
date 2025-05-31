@@ -269,7 +269,7 @@ class LoginActivity : AppCompatActivity() {
     /**
      * Makes a post call to create the user.
      */
-    private fun createUser(firebaseId: String) {
+    /**private fun createUser(firebaseId: String) {
         val user = UserRequest(null, "", "diego", "private", firebaseId, "diego", "Programador")
         Log.d("", "Creando usuario $user")
         val call = ApiClient.userService.createUser(user)
@@ -290,7 +290,7 @@ class LoginActivity : AppCompatActivity() {
                 Log.e("CreateUser", "Fallo en la creación del usuario: ${t.message}")
             }
         })
-    }
+    }*/
 
     private fun getApiUser(firebaseId: String): Call<UserResponse> {
         return ApiClient.userService.getUserByFirebaseId(firebaseId)

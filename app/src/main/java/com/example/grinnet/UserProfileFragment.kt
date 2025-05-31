@@ -3,17 +3,18 @@ package com.example.grinnet
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.grinnet.data.FollowRequest
 import com.example.grinnet.data.UserEmpty
 import com.example.grinnet.data.UserRequest
+import com.example.grinnet.notifications.FollowNotificationSender
 import com.example.grinnet.utils.SessionManager
 import retrofit2.Call
 import retrofit2.Callback
@@ -77,7 +78,7 @@ class UserProfileFragment : Fragment() {
         call.enqueue(object : Callback<FollowRequest> {
             override fun onResponse(call: Call<FollowRequest>, response: Response<FollowRequest>) {
                 if (response.isSuccessful) {
-
+                    sendFollowNotification(userFollowed.tokenPush, idFollower)
                 }
             }
 
@@ -85,5 +86,13 @@ class UserProfileFragment : Fragment() {
             }
 
         })
+    }
+
+    fun sendFollowNotification(fcmToken: String, followerName: Long) {
+        FollowNotificationSender.sendFollowNotification(
+            requireActivity(),
+            fcmToken,
+            followerName
+        )
     }
 }

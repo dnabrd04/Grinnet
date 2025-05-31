@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.security.crypto)
+    implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -59,7 +60,7 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.google.firebase.auth.ktx)
     implementation(libs.firebase.storage)
-    implementation(libs.firebase.messaging)
+    implementation(libs.volley)
 
     implementation(libs.glide)
 

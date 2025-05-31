@@ -180,7 +180,7 @@ class CreatePostActivity : AppCompatActivity() {
         SessionManager.init(this)
 
         //I need this because the user field in the backend is an object and not a long
-        val userRequest = UserRequest(SessionManager.userId!!, "", "", "", "", "", "")
+        val userRequest = UserRequest(SessionManager.userId!!, "", "", "", "", "", "", "")
 
         //I need this because the format of the date doesn't match the backend format.
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
