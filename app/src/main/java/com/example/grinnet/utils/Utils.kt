@@ -1,8 +1,11 @@
 package com.example.grinnet.utils
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.widget.GridLayout
@@ -76,5 +79,19 @@ object Utils{
         val intent = Intent(context, MainActivity::class.java)
         context.startActivity(intent)
         (context as Activity).finish()
+    }
+
+    fun initNotificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "seguidores",
+                "Notificaciones de Seguidores",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Canal para notificaciones de nuevos seguidores"
+            }
+            val manager = context.getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
     }
 }

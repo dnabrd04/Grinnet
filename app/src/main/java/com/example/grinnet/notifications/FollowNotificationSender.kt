@@ -5,6 +5,7 @@ import android.util.Log
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.example.grinnet.MainActivity
 import org.json.JSONObject
 
 object FollowNotificationSender {
@@ -26,6 +27,6 @@ object FollowNotificationSender {
             { error -> Log.e("FollowNotify", "Error: ${error.message}") }
         )
 
-        Volley.newRequestQueue(context).add(request)
+        MainActivity.requestQueue.add(request)
     }
 }

@@ -7,18 +7,27 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.Volley
 import com.example.grinnet.data.UserRequest
+import com.example.grinnet.network.OkHttp3Stack
+import com.example.grinnet.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
+    companion object {
+        lateinit var requestQueue: RequestQueue
+            private set
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
@@ -27,6 +36,19 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        Utils.initNotificationChannel(this)
+
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .build()
+
+        val stack = OkHttp3Stack(okHttpClient)
+        requestQueue = Volley.newRequestQueue(this, stack)
 
         val fragment = HomeFragment()
 
