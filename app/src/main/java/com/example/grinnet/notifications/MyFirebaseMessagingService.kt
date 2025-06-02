@@ -1,7 +1,13 @@
 package com.example.grinnet.notifications
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.example.grinnet.ApiClient
+import com.example.grinnet.R
 import com.example.grinnet.data.UserResponse
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -22,6 +28,21 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         remoteMessage.notification?.let {
             Log.d("FCM", "Notificación recibida: ${it.title} - ${it.body}")
         }
+    }
+
+    private fun showNotification(title: String?, body: String?) {
+        val channelId = "seguidores"
+        val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            nm.createNotificationChannel(NotificationChannel(channelId, "General", NotificationManager.IMPORTANCE_DEFAULT))
+        }
+        val n = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setAutoCancel(true)
+            .build()
+        nm.notify(0, n)
     }
 
     override fun onNewToken(token: String) {

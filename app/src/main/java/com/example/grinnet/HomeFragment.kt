@@ -7,10 +7,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.grinnet.adapter.OnUserClickListener
 import com.example.grinnet.adapter.PostAdapter
 import com.example.grinnet.data.PostResponse
@@ -18,7 +18,6 @@ import com.example.grinnet.data.UserIdRequest
 import com.example.grinnet.data.UserRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import okhttp3.internal.notifyAll
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,6 +32,7 @@ class HomeFragment : Fragment(), OnUserClickListener {
     private lateinit var list: MutableList<PostResponse>
     private lateinit var postList: RecyclerView
     private lateinit var adapter: PostAdapter
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +56,10 @@ class HomeFragment : Fragment(), OnUserClickListener {
             showCreatePostView()
         }
 
+        swipeRefreshLayout = view.findViewById(R.id.refreshList)
+        swipeRefreshLayout.setOnRefreshListener {
+            updatePostList()
+        }
         updatePostList()
 
         return view
@@ -84,6 +88,8 @@ class HomeFragment : Fragment(), OnUserClickListener {
                 } else {
                     Log.d("Respuesta del like", response.errorBody().toString())
                 }
+
+                swipeRefreshLayout.isRefreshing = false
             }
 
             override fun onFailure(call: Call<MutableList<PostResponse>>, t: Throwable) {
