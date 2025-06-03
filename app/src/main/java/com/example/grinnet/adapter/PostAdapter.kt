@@ -15,6 +15,7 @@ import com.example.grinnet.ApiClient
 import com.example.grinnet.CreatePostActivity
 import com.example.grinnet.R
 import com.example.grinnet.data.Like
+import com.example.grinnet.data.PostDTORequest
 import com.example.grinnet.data.PostResponse
 import com.example.grinnet.data.UserEmpty
 import com.example.grinnet.data.UserRequest
@@ -23,6 +24,8 @@ import com.example.grinnet.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 class PostAdapter(private var postList: MutableList<PostResponse>, val context: Context, private val onUserClickListener: OnUserClickListener):
     RecyclerView.Adapter<PostAdapter.ViewHolder>() {
@@ -30,6 +33,7 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
     class ViewHolder(element: View): RecyclerView.ViewHolder(element) {
         val userImage = element.findViewById<ImageView>(R.id.imageUserPost)
         val username = element.findViewById<TextView>(R.id.usernamePost)
+        val publicationDate = element.findViewById<TextView>(R.id.publicationDate)
         val numLikes = element.findViewById<TextView>(R.id.numLikes)
         val numComments = element.findViewById<TextView>(R.id.numComments)
         val postContent = element.findViewById<TextView>(R.id.postContentText)
@@ -57,6 +61,13 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         holder.postContent.text = post.text
         holder.numLikes.text = post.likeCount.toString()
         holder.numComments.text = post.commentCount.toString()
+        holder.likeButton.setImageResource(R.drawable.empty_favorite_icon)
+
+        val locale = holder.itemView.context.resources.configuration.locales[0]
+        val date = OffsetDateTime.parse(post.creationDate, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        val format = DateTimeFormatter.ofPattern("d MMM yyyy", locale).withLocale(locale)
+        val formattedDate = date.format(format)
+        holder.publicationDate.text = formattedDate
 
         if (post.resources != null && post.resources.isNotEmpty()) {
             holder.imageContainer.visibility = View.VISIBLE
@@ -76,7 +87,12 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         }
 
         holder.likeButton.setOnClickListener {
-            giveLike(post)
+
+            if (!post.liked) {
+                giveLike(post, position)
+            } else {
+                removeLike(post, position)
+            }
         }
 
         holder.commentButton.setOnClickListener {
@@ -99,23 +115,39 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         onUserClickListener.onUserClick(user)
     }
 
-    private fun giveLike(post: PostResponse) {
+    private fun giveLike(post: PostResponse, position: Int) {
         val user = UserEmpty(SessionManager.init(context) ?: -1L)
-        Log.d("Prueba de valores de post", post.toString())
         val like =  Like(user, post)
 
-        ApiClient.likeService.createLike(like).enqueue(object: Callback<Like> {
+        ApiClient.likeService.createLike(like).enqueue(object: Callback<Void> {
 
-            override fun onResponse(call: Call<Like>, response: Response<Like>) {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if(response.isSuccessful) {
-                    Log.d("Respuesta del like", response.toString())
+                    updatePost(post, position)
                 }
             }
 
-            override fun onFailure(call: Call<Like>, t: Throwable) {
+            override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.d("Error del like", t.message.toString())
             }
 
+        })
+    }
+
+    private fun removeLike(post: PostResponse, position: Int) {
+        val user = UserEmpty(SessionManager.init(context) ?: -1L)
+
+        ApiClient.likeService.deleteLike(user.idUser, post.idPost).enqueue(object: Callback<Void> {
+
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    updatePost(post, position)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("Error del like", t.message.toString())
+            }
         })
     }
 
@@ -136,6 +168,26 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         postList.clear()
         postList.addAll(newItems)
         notifyDataSetChanged()
+    }
+
+    fun updatePost(postResponse: PostResponse, position: Int) {
+        val postDTO = PostDTORequest(postResponse.idPost, postResponse.user.firebaseId)
+        val call = ApiClient.postService.getPost(postDTO)
+        call.enqueue(object: Callback<PostResponse> {
+            override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
+                if (response.isSuccessful) {
+                    val post = response.body()!!
+                    Log.d("Post update", "Estos son los nuevos valores del post: ${post.likeCount}, ${post.liked}")
+                    postList[position] = post
+                    notifyItemChanged(position)
+                }
+            }
+
+            override fun onFailure(call: Call<PostResponse>, t: Throwable) {
+                Log.d("Error del like", t.message.toString())
+            }
+
+        })
     }
 }
 

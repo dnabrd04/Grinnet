@@ -1,5 +1,6 @@
 package com.example.grinnet.service
 
+import com.example.grinnet.data.PostDTORequest
 import com.example.grinnet.data.PostRequest
 import com.example.grinnet.data.PostResponse
 import com.example.grinnet.data.UserIdRequest
@@ -14,8 +15,8 @@ interface PostService {
     @POST("/post")
     fun createPost(@Body post: PostRequest): Call<PostResponse>
 
-    @GET("/post/{id}")
-    fun getPost(@Path("id") idPost: Long): Call<PostResponse>
+    @POST("/post/one-with-likes")
+    fun getPost(@Body post: PostDTORequest): Call<PostResponse>
 
     @POST("/post/with-likes")
     fun getPosts(@Body request: UserIdRequest): Call<MutableList<PostResponse>>

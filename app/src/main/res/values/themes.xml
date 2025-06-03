@@ -10,5 +10,6 @@
     <style name="SplashTheme" parent="Theme.SplashScreen">
         <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
         <item name="postSplashScreenTheme">@style/Theme.Grinnet</item>
+        <item name="android:windowSplashScreenAnimationDuration">600</item>
     </style>
 </resources>

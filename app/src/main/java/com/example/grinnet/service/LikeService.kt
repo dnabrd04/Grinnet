@@ -13,11 +13,11 @@ import retrofit2.http.Query
 
 interface LikeService {
     @POST("/like")
-    fun createLike(@Body like: Like): Call<Like>
+    fun createLike(@Body like: Like): Call<Void>
 
     @GET("/like/{id}")
     fun getCountLike(@Path("id") id: Long): Call<Like>
 
     @DELETE("/like/{id}")
-    fun deleteLike(@Path("id") id: Long, @Query("postId") postId: Long): Call<Like>
+    fun deleteLike(@Path("id") id: Long, @Query("postId") postId: Long): Call<Void>
 }
