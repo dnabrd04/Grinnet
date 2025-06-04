@@ -25,6 +25,9 @@
     <string name="postTextHint">Escriba el texto de la publicación</string>
 
     <string name="followButton">Seguir</string>
+    <string name="followButton2">Siguiendo</string>
+    <string name="modalUnfollowTitle">¿Dejar de seguir a @#?</string>
+    <string name="modalUnfollowMessage">Es posible que ya no puedas ver algunos de sus posts.</string>
     <string name="followerText">Siguiendo</string>
     <string name="followingText">Seguidores</string>
 

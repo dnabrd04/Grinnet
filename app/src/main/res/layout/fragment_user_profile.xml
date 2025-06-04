@@ -16,13 +16,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/followButton"
+        android:id="@+id/followButton2"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/intenseSecondary"
+        android:text="@string/followButton2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/followButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/intensePrimary"
         android:text="@string/followButton"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/followButton2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -63,6 +73,18 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/followingText" />
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/followStats" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

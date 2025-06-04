@@ -21,6 +21,8 @@ import com.example.grinnet.data.UserEmpty
 import com.example.grinnet.data.UserRequest
 import com.example.grinnet.utils.SessionManager
 import com.example.grinnet.utils.Utils
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -88,10 +90,10 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
 
         holder.likeButton.setOnClickListener {
 
-            if (!post.liked) {
-                giveLike(post, position)
-            } else {
+            if (post.liked) {
                 removeLike(post, position)
+            } else {
+                giveLike(post, position)
             }
         }
 
@@ -171,7 +173,7 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
     }
 
     fun updatePost(postResponse: PostResponse, position: Int) {
-        val postDTO = PostDTORequest(postResponse.idPost, postResponse.user.firebaseId)
+        val postDTO = PostDTORequest(postResponse.idPost, Firebase.auth.uid ?: "")
         val call = ApiClient.postService.getPost(postDTO)
         call.enqueue(object: Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
@@ -179,6 +181,7 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
                     val post = response.body()!!
                     Log.d("Post update", "Estos son los nuevos valores del post: ${post.likeCount}, ${post.liked}")
                     postList[position] = post
+                    Log.d("Post update", "Estos son los valores cambiados: ${postList[position].likeCount}, ${postList[position].liked}")
                     notifyItemChanged(position)
                 }
             }

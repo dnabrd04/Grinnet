@@ -26,6 +26,9 @@
     <string name="postTextHint">Type the text of the publication</string>
 
     <string name="followButton">Follow</string>
+    <string name="followButton2">Following</string>
+    <string name="modalUnfollowTitle">Unfollow @#?</string>
+    <string name="modalUnfollowMessage">You may no longer be able to see some of his posts.</string>
     <string name="followerText">Followers</string>
     <string name="followingText">Following</string>
 </resources>

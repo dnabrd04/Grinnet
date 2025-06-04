@@ -1,8 +1,10 @@
 package com.example.grinnet
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -36,8 +38,6 @@ class UserProfileFragment : Fragment() {
 
     private lateinit var user: UserRequest
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -57,15 +57,66 @@ class UserProfileFragment : Fragment() {
 
         val imageProfile = view.findViewById<ImageView>(R.id.profileImage)
         val followButton = view.findViewById<Button>(R.id.followButton)
+        val followButton2 = view.findViewById<Button>(R.id.followButton2)
         val username = view.findViewById<TextView>(R.id.username)
         val description = view.findViewById<TextView>(R.id.description)
         val followingCount = view.findViewById<TextView>(R.id.followingCount)
         val followerCount = view.findViewById<TextView>(R.id.followerCount)
 
-        username.text = user.username
+        val callFollowers = ApiClient.followService.getFollowersByUser(user.idUser!!)
+        val callFollowings = ApiClient.followService.getFollowingsByUser(user.idUser!!)
+
+        val callCheckFollow = ApiClient.followService.checkIfUserFollows(
+            user.idUser!!,
+            SessionManager.init(requireActivity())!!
+        )
+
+        callCheckFollow.enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    val isFollowing = response.body() ?: false
+
+                    if (isFollowing) {
+                        followButton.visibility = View.GONE
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Log.d("Follow Check Error", t.message.toString())
+            }
+        })
+
+        callFollowers.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    val text = "${getText(R.string.followerText)} ${response.body().toString()}"
+                    followerCount.text = text
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.d("Error seguidores", t.message.toString())
+            }
+        })
+
+        callFollowings.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    val text = "${getText(R.string.followingText)} ${response.body().toString()}"
+                    followingCount.text = text
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.d("Error seguidores", t.message.toString())
+            }
+        })
+
+        val usernameText = "@${user.username}"
+        username.text = usernameText
         description.text = user.description
 
-        Log.d("Imagen", user.image)
         if (user.image == "" || user.image.isEmpty()) {
             imageProfile.setImageResource(R.drawable.account_icon)
         } else {
@@ -76,7 +127,46 @@ class UserProfileFragment : Fragment() {
             followThisUser(user, SessionManager.init(requireActivity())!!)
         }
 
+        followButton2.setOnClickListener {
+            showUnfollowDialog(requireActivity(), user.username, SessionManager.init(requireActivity()) ?: -1L, user.idUser!!)
+        }
+
         return view
+    }
+
+    fun showUnfollowDialog(context: Context, username: String, followerId: Long, followedId: Long) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("¿Dejar de seguir a @$username?")
+        builder.setMessage("Ya no verás los tweets de @$username en tu línea de tiempo.")
+
+        builder.setPositiveButton("Dejar de seguir") { dialog, _ ->
+            unfollowUser(followerId, followedId)
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(Color.RED)
+    }
+
+    fun unfollowUser(followerId: Long, followedId: Long) {
+        val call = ApiClient.followService.unfollowUser(followerId, followedId)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("Unfollow", "Usuario dejado de seguir correctamente")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("Unfollow", "Error al dejar de seguir: ${t.message}")
+            }
+        })
     }
 
     private fun followThisUser (userFollowed: UserRequest, idFollower: Long) {
