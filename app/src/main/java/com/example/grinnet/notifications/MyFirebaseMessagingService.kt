@@ -3,6 +3,7 @@ package com.example.grinnet.notifications
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -36,8 +37,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             nm.createNotificationChannel(NotificationChannel(channelId, "General", NotificationManager.IMPORTANCE_DEFAULT))
         }
+
+        val largeIconBitmap = BitmapFactory.decodeResource(resources, R.drawable.notification_grinnet)
+
         val n = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.notification_grinnet)
+            .setLargeIcon(largeIconBitmap)
             .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)

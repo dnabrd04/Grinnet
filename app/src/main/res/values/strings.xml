@@ -23,6 +23,7 @@
     <string name="closeButton">⨉</string>
     <string name="publishButton">Publicar</string>
     <string name="postTextHint">Escriba el texto de la publicación</string>
+    <string name="commentTextHint">Escriba el comentario</string>
 
     <string name="followButton">Seguir</string>
     <string name="followButton2">Siguiendo</string>

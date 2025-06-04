@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -153,6 +154,29 @@ class LoginActivity : AppCompatActivity() {
                                                 this@LoginActivity,
                                                 responseUser.idUser ?: -1L
                                             )
+
+                                            var token = ""
+                                            FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                                                if (it.isSuccessful) {
+                                                    token = it.result
+                                                }
+                                            }
+
+                                            if (token != "" ) {
+                                                val callUpdateTokenPush = ApiClient.userService.updateToken(responseUser.firebaseId, token)
+                                                callUpdateTokenPush.enqueue(object: Callback<UserResponse>{
+                                                    override fun onResponse(
+                                                        call: Call<UserResponse>,
+                                                        response: Response<UserResponse>
+                                                    ) {
+                                                    }
+                                                    override fun onFailure(
+                                                        call: Call<UserResponse>,
+                                                        t: Throwable
+                                                    ) {
+                                                    }
+                                                })
+                                            }
                                         }
                                     }
                                 }
@@ -161,6 +185,9 @@ class LoginActivity : AppCompatActivity() {
                                 }
 
                             })
+
+
+
                             Utils.goToHome(this)
                         } else {
                             showAlert()

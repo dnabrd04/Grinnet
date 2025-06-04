@@ -24,6 +24,7 @@
     <string name="closeButton">⨉</string>
     <string name="publishButton">Publish</string>
     <string name="postTextHint">Type the text of the publication</string>
+    <string name="commentTextHint">Type the comment</string>
 
     <string name="followButton">Follow</string>
     <string name="followButton2">Following</string>

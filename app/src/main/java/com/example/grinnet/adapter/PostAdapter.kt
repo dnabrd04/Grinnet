@@ -6,14 +6,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grinnet.ApiClient
 import com.example.grinnet.CreatePostActivity
 import com.example.grinnet.R
+import com.example.grinnet.data.CommentRequest
+import com.example.grinnet.data.CommentResponse
 import com.example.grinnet.data.Like
 import com.example.grinnet.data.PostDTORequest
 import com.example.grinnet.data.PostResponse
@@ -28,6 +33,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import androidx.core.view.isVisible
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PostAdapter(private var postList: MutableList<PostResponse>, val context: Context, private val onUserClickListener: OnUserClickListener):
     RecyclerView.Adapter<PostAdapter.ViewHolder>() {
@@ -43,6 +52,10 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         val commentButton = element.findViewById<ImageButton>(R.id.commentButton)
         val replyButton = element.findViewById<ImageButton>(R.id.replyButton)
         val imageContainer = element.findViewById<GridLayout>(R.id.imageContainer)
+        val commentContainer = element.findViewById<LinearLayout>(R.id.commentsContainer)
+        val commentList = element.findViewById<RecyclerView>(R.id.commentList)
+        val commentInput = element.findViewById<EditText>(R.id.commentInput)
+        val senderCommentButton = element.findViewById<ImageButton>(R.id.sendCommentButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -64,6 +77,7 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         holder.numLikes.text = post.likeCount.toString()
         holder.numComments.text = post.commentCount.toString()
         holder.likeButton.setImageResource(R.drawable.empty_favorite_icon)
+        holder.commentContainer.visibility = View.GONE
 
         val locale = holder.itemView.context.resources.configuration.locales[0]
         val date = OffsetDateTime.parse(post.creationDate, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
@@ -89,16 +103,40 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         }
 
         holder.likeButton.setOnClickListener {
+            val currentPosition = holder.adapterPosition
 
-            if (post.liked) {
-                removeLike(post, position)
-            } else {
-                giveLike(post, position)
+            if (currentPosition != RecyclerView.NO_POSITION) {
+                val currentPost = postList[currentPosition]
+                if (currentPost.liked) {
+                    removeLike(currentPost, currentPosition)
+                } else {
+                    giveLike(currentPost, currentPosition)
+                }
             }
         }
 
         holder.commentButton.setOnClickListener {
-            goCommentActivity(post)
+            if (holder.commentContainer.isVisible) {
+                holder.commentContainer.visibility = View.GONE
+            } else {
+                holder.commentContainer.visibility = View.VISIBLE
+                val callCommentList = ApiClient.commentService.getCommentsByPost(post.idPost)
+                callCommentList.enqueue(object : Callback<MutableList<CommentResponse>> {
+                    override fun onResponse(
+                        call: Call<MutableList<CommentResponse>>,
+                        response: Response<MutableList<CommentResponse>>
+                    ) {
+                        if (response.isSuccessful) {
+                            holder.commentList.adapter = CommentAdapter(response.body()!!, context)
+                            holder.commentList.layoutManager = LinearLayoutManager(context)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<MutableList<CommentResponse>>, t: Throwable) {
+                    }
+
+                })
+            }
         }
 
         holder.replyButton.setOnClickListener {
@@ -108,6 +146,14 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         holder.userImage.setOnClickListener {
             goUserProfile(post.user)
         }
+
+        holder.senderCommentButton.setOnClickListener {
+            val currentPosition = holder.adapterPosition
+            if (currentPosition != RecyclerView.NO_POSITION) {
+                val currentPost = postList[currentPosition]
+                sendComment(currentPost, (holder.commentInput.text ?: "").toString(), currentPosition)
+            }
+        }
     }
 
     private fun goUserProfile(user: UserRequest) {
@@ -115,6 +161,26 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
 //        intent.putExtra("user", user)
 //        context.startActivity(intent)
         onUserClickListener.onUserClick(user)
+    }
+
+    private fun sendComment(post: PostResponse, text: String, position: Int) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val formattedDate = dateFormat.format(Date())
+
+        val commentUser = UserEmpty(SessionManager.init(context) ?: -1L)
+        val comment = CommentRequest(commentUser, post, text, formattedDate)
+        val call = ApiClient.commentService.createComment(comment)
+
+        call.enqueue(object : Callback<CommentResponse> {
+            override fun onResponse(call: Call<CommentResponse>, response: Response<CommentResponse>) {
+                if (response.isSuccessful) {
+                    updatePost(post, position)
+                }
+            }
+
+            override fun onFailure(call: Call<CommentResponse>, t: Throwable) {
+            }
+        })
     }
 
     private fun giveLike(post: PostResponse, position: Int) {
