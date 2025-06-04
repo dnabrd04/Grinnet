@@ -17,12 +17,20 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.grinnet.adapter.OnUserClickListener
+import com.example.grinnet.adapter.PostAdapter
 import com.example.grinnet.data.FollowRequest
+import com.example.grinnet.data.PostListRequest
+import com.example.grinnet.data.PostResponse
 import com.example.grinnet.data.UserEmpty
 import com.example.grinnet.data.UserRequest
 import com.example.grinnet.notifications.FollowNotificationSender
 import com.example.grinnet.utils.SessionManager
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,9 +42,15 @@ import java.util.Date
  * Use the [UserProfileFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class UserProfileFragment : Fragment() {
+class UserProfileFragment : Fragment(), OnUserClickListener{
 
+    private lateinit var list: MutableList<PostResponse>
     private lateinit var user: UserRequest
+    private lateinit var followingCount: TextView
+    private lateinit var followerCount: TextView
+    private lateinit var followButton: Button
+    private lateinit var userPostList: RecyclerView
+    private lateinit var adapter: PostAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,62 +70,22 @@ class UserProfileFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_user_profile, container, false)
 
         val imageProfile = view.findViewById<ImageView>(R.id.profileImage)
-        val followButton = view.findViewById<Button>(R.id.followButton)
         val followButton2 = view.findViewById<Button>(R.id.followButton2)
         val username = view.findViewById<TextView>(R.id.username)
         val description = view.findViewById<TextView>(R.id.description)
-        val followingCount = view.findViewById<TextView>(R.id.followingCount)
-        val followerCount = view.findViewById<TextView>(R.id.followerCount)
+        followButton = view.findViewById(R.id.followButton)
+        followingCount = view.findViewById(R.id.followingCount)
+        followerCount = view.findViewById(R.id.followerCount)
+        userPostList = view.findViewById(R.id.userPostList)
+        list = mutableListOf<PostResponse>()
+        adapter = PostAdapter(list, this.requireContext(), this)
+        userPostList.layoutManager = LinearLayoutManager(requireActivity())
+        userPostList.adapter = adapter
 
-        val callFollowers = ApiClient.followService.getFollowersByUser(user.idUser!!)
-        val callFollowings = ApiClient.followService.getFollowingsByUser(user.idUser!!)
-
-        val callCheckFollow = ApiClient.followService.checkIfUserFollows(
-            user.idUser!!,
-            SessionManager.init(requireActivity())!!
-        )
-
-        callCheckFollow.enqueue(object : Callback<Boolean> {
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                if (response.isSuccessful) {
-                    val isFollowing = response.body() ?: false
-
-                    if (isFollowing) {
-                        followButton.visibility = View.GONE
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                Log.d("Follow Check Error", t.message.toString())
-            }
-        })
-
-        callFollowers.enqueue(object : Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                if (response.isSuccessful) {
-                    val text = "${getText(R.string.followerText)} ${response.body().toString()}"
-                    followerCount.text = text
-                }
-            }
-
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.d("Error seguidores", t.message.toString())
-            }
-        })
-
-        callFollowings.enqueue(object : Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                if (response.isSuccessful) {
-                    val text = "${getText(R.string.followingText)} ${response.body().toString()}"
-                    followingCount.text = text
-                }
-            }
-
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.d("Error seguidores", t.message.toString())
-            }
-        })
+        showHideButton()
+        getFollowerCount()
+        getFollowingCount()
+        initPostList(user.idUser!!)
 
         val usernameText = "@${user.username}"
         username.text = usernameText
@@ -132,6 +106,79 @@ class UserProfileFragment : Fragment() {
         }
 
         return view
+    }
+
+    fun initPostList(idUser: Long) {
+        val postListRequest = PostListRequest(idUser, Firebase.auth.uid ?: "")
+        val call = ApiClient.postService.getPostList(postListRequest)
+
+        call.enqueue(object: Callback<MutableList<PostResponse>> {
+            override fun onResponse(call: Call<MutableList<PostResponse>>, response: Response<MutableList<PostResponse>>) {
+                if (response.isSuccessful) {
+                    adapter.updateData(response.body()!!.asReversed())
+                }
+            }
+
+            override fun onFailure(call: Call<MutableList<PostResponse>>, t: Throwable) {
+            }
+        })
+    }
+
+    fun showHideButton(){
+        val callCheckFollow = ApiClient.followService.checkIfUserFollows(
+            user.idUser!!,
+            SessionManager.init(requireActivity())!!
+        )
+
+        callCheckFollow.enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    val isFollowing = response.body() ?: false
+
+                    if (isFollowing) {
+                        followButton.visibility = View.GONE
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Log.d("Follow Check Error", t.message.toString())
+            }
+        })
+    }
+
+    fun getFollowerCount() {
+        val callFollowers = ApiClient.followService.getFollowersByUser(user.idUser!!)
+
+        callFollowers.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    val text = "${getText(R.string.followerText)} ${response.body().toString()}"
+                    followerCount.text = text
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.d("Error seguidores", t.message.toString())
+            }
+        })
+    }
+
+    fun getFollowingCount() {
+        val callFollowings = ApiClient.followService.getFollowingsByUser(user.idUser!!)
+
+        callFollowings.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    val text = "${getText(R.string.followingText)} ${response.body().toString()}"
+                    followingCount.text = text
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.d("Error seguidores", t.message.toString())
+            }
+        })
     }
 
     fun showUnfollowDialog(context: Context, username: String, followerId: Long, followedId: Long) {
@@ -191,5 +238,8 @@ class UserProfileFragment : Fragment() {
             fcmToken,
             followerName
         )
+    }
+
+    override fun onUserClick(user: UserRequest) {
     }
 }

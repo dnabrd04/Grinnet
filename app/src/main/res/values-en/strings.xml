@@ -31,4 +31,5 @@
     <string name="modalUnfollowMessage">You may no longer be able to see some of his posts.</string>
     <string name="followerText">Followers</string>
     <string name="followingText">Following</string>
+    <string name="postsText">Posts</string>
 </resources>
