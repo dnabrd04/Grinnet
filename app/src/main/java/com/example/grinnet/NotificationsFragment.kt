@@ -1,5 +1,6 @@
 package com.example.grinnet
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -55,5 +56,12 @@ class NotificationsFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    private fun getNotificationsFromLocalOrServer(): List<String> {
+        val sharedPrefs = requireContext().getSharedPreferences("notifications", Context.MODE_PRIVATE)
+        val saved = sharedPrefs.getStringSet("notification_list", emptySet()) ?: emptySet()
+        return saved.sortedByDescending { it.split("|")[0].toLong() }
+            .map { it.split("|").getOrElse(2) { "Notificación" } }
     }
 }

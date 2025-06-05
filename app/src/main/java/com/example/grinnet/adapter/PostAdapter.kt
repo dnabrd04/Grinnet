@@ -96,11 +96,11 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
             holder.likeButton.setImageResource(R.drawable.favorite_icon)
         }
 
-        if (post.user.image == "") {
+        //if (post.user.image == "") {
             holder.userImage.setImageResource(R.drawable.account_icon)
-        } else {
+        /*} else {
 //            holder.userImage.setImageResource()
-        }
+        }*/
 
         holder.likeButton.setOnClickListener {
             val currentPosition = holder.adapterPosition

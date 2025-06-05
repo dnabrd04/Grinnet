@@ -141,10 +141,10 @@ class LoginActivity : AppCompatActivity() {
 
                         if( it.isSuccessful ){
                             val call = getApiUser(auth.currentUser!!.uid)
-                            call.enqueue(object: Callback<UserResponse>{
+                            call.enqueue(object: Callback<UserRequest>{
                                 override fun onResponse(
-                                    call: Call<UserResponse>,
-                                    response: Response<UserResponse>
+                                    call: Call<UserRequest>,
+                                    response: Response<UserRequest>
                                 ) {
                                     if(response.isSuccessful) {
                                         val responseUser = response.body()
@@ -181,7 +181,7 @@ class LoginActivity : AppCompatActivity() {
                                     }
                                 }
 
-                                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                                override fun onFailure(call: Call<UserRequest>, t: Throwable) {
                                 }
 
                             })
@@ -253,10 +253,10 @@ class LoginActivity : AppCompatActivity() {
                     if (user != null) {
                         // Verificar si el usuario existe en nuestra API
                         val call = getApiUser(user.uid)
-                        call.enqueue(object: Callback<UserResponse> {
+                        call.enqueue(object: Callback<UserRequest> {
                             override fun onResponse(
-                                call: Call<UserResponse>,
-                                response: Response<UserResponse>
+                                call: Call<UserRequest>,
+                                response: Response<UserRequest>
                             ) {
                                 if(response.isSuccessful) {
                                     val responseUser = response.body()
@@ -271,7 +271,7 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             }
 
-                            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                            override fun onFailure(call: Call<UserRequest>, t: Throwable) {
                                 Log.d("", t.message!!)
                             }
                         })
@@ -319,7 +319,7 @@ class LoginActivity : AppCompatActivity() {
         })
     }*/
 
-    private fun getApiUser(firebaseId: String): Call<UserResponse> {
+    private fun getApiUser(firebaseId: String): Call<UserRequest> {
         return ApiClient.userService.getUserByFirebaseId(firebaseId)
     }
 

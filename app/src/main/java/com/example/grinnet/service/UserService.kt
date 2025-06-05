@@ -14,7 +14,7 @@ interface UserService {
     fun createUser(@Body user: UserRequest): Call<UserRequest>
 
     @GET("/user/firebase/{firebaseId}")
-    fun getUserByFirebaseId(@Path("firebaseId") id: String): Call<UserResponse>
+    fun getUserByFirebaseId(@Path("firebaseId") id: String): Call<UserRequest>
 
     @GET("/user/{id}")
     fun getUser(@Path("id") id: Long): Call<UserResponse>
@@ -24,4 +24,7 @@ interface UserService {
 
     @PUT("/user/token/{firebaseId}")
     fun updateToken(@Path("firebaseId") firebaseId: String, @Body token: String): Call<UserResponse>
+
+    @PUT("/user/image/{id}")
+    fun updateUserImage(@Path("id") id: Long, @Body userImage: String): Call<UserResponse>
 }

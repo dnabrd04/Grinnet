@@ -28,6 +28,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         remoteMessage.notification?.let {
             Log.d("FCM", "Notificación recibida: ${it.title} - ${it.body}")
+            saveNotificationLocally(it.title, it.body)
         }
     }
 
@@ -41,13 +42,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val largeIconBitmap = BitmapFactory.decodeResource(resources, R.drawable.notification_grinnet)
 
         val n = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.notification_grinnet)
+            .setSmallIcon(R.drawable.logo)
             .setLargeIcon(largeIconBitmap)
             .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)
             .build()
         nm.notify(0, n)
+    }
+
+    private fun saveNotificationLocally(title: String?, body: String?) {
+        val sharedPrefs = getSharedPreferences("notifications", Context.MODE_PRIVATE)
+        val editor = sharedPrefs.edit()
+        val oldList = sharedPrefs.getStringSet("notification_list", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+        val newEntry = "${System.currentTimeMillis()}|${title ?: ""}|${body ?: ""}"
+        oldList.add(newEntry)
+        editor.putStringSet("notification_list", oldList)
+        editor.apply()
     }
 
     override fun onNewToken(token: String) {
