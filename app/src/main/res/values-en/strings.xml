@@ -31,7 +31,7 @@
     <string name="searchTextInformationText">Enter the name of the user you want to find</string>
     <string name="searchTextNoCoincidences">No users were found with this data</string>
 
-    <string name="exploreOption">Explore</string>
+    <string name="exploreOption">Explore all</string>
     <string name="forYouOption">Following</string>
 
     <string name="followButton">Follow</string>

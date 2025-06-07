@@ -30,7 +30,7 @@
     <string name="searchTextInformationText">Escriba el nombre del usuario que desea encontrar</string>
     <string name="searchTextNoCoincidences">No se encontro a ningun usuario con esos datos</string>
 
-    <string name="exploreOption">Explorar</string>
+    <string name="exploreOption">Explorar todo</string>
     <string name="forYouOption">Siguiendo</string>
 
     <string name="followButton">Seguir</string>
