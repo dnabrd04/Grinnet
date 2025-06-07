@@ -8,14 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.grinnet.adapter.OnUserClickListener
 import com.example.grinnet.adapter.PostAdapter
+import com.example.grinnet.data.PostDTORequest
 import com.example.grinnet.data.PostResponse
 import com.example.grinnet.data.UserIdRequest
 import com.example.grinnet.data.UserRequest
+import com.example.grinnet.utils.SessionManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import retrofit2.Call
@@ -33,6 +37,9 @@ class HomeFragment : Fragment(), OnUserClickListener {
     private lateinit var postList: RecyclerView
     private lateinit var adapter: PostAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var exploreTab: TextView
+    private lateinit var followedTab: TextView
+    private var isFollowingMode = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +58,22 @@ class HomeFragment : Fragment(), OnUserClickListener {
         postList.layoutManager = LinearLayoutManager(requireActivity())
         postList.adapter = adapter
 
+        exploreTab = view.findViewById(R.id.exploreTab)
+        followedTab = view.findViewById(R.id.followedTab)
+        updateTabStyles()
+
+        exploreTab.setOnClickListener {
+            isFollowingMode = false
+            updateTabStyles()
+            updatePostList()
+        }
+
+        followedTab.setOnClickListener {
+            isFollowingMode = true
+            updateTabStyles()
+            updatePostList()
+        }
+
         val addButton = view.findViewById<ImageButton>(R.id.addButton)
         addButton.setOnClickListener {
             showCreatePostView()
@@ -65,35 +88,67 @@ class HomeFragment : Fragment(), OnUserClickListener {
         return view
     }
 
+    private fun updateTabStyles() {
+        exploreTab.setTextColor(
+            ContextCompat.getColor(requireContext(), if (isFollowingMode) R.color.gray else R.color.black)
+        )
+        followedTab.setTextColor(
+            ContextCompat.getColor(requireContext(), if (isFollowingMode) R.color.black else R.color.gray)
+        )
+    }
+
     private fun updatePostList() {
         val firebaseId = Firebase.auth.currentUser?.uid
-        var userIdRequest = UserIdRequest("")
+        var userIdRequest = UserIdRequest(-1L,"")
+        swipeRefreshLayout.isRefreshing = true
 
         if (firebaseId != null) {
-            userIdRequest = UserIdRequest(firebaseId)
+            userIdRequest = UserIdRequest(SessionManager.init(requireActivity()) ?: -1L, firebaseId)
         }
 
-        ApiClient.postService.getPosts(userIdRequest).enqueue(object: Callback<MutableList<PostResponse>>{
-            override fun onResponse(
-                call: Call<MutableList<PostResponse>>,
-                response: Response<MutableList<PostResponse>>
-            ) {
-                Log.d("Respuesta del like", response.body().toString())
-                if(response.isSuccessful) {
-                    val list = response.body()!!.asReversed()
-                    adapter.updateData(list)
-                } else {
-                    Log.d("Respuesta del like", response.errorBody().toString())
-                }
+        if (isFollowingMode) {
+            ApiClient.postService.getPostsFollowed(userIdRequest)
+                .enqueue(object : Callback<MutableList<PostResponse>> {
+                    override fun onResponse(
+                        call: Call<MutableList<PostResponse>>,
+                        response: Response<MutableList<PostResponse>>
+                    ) {
+                        Log.d("Respuesta del like", response.body().toString())
+                        if (response.isSuccessful) {
+                            val list = response.body()!!.asReversed()
+                            adapter.updateData(list)
+                        }
 
-                swipeRefreshLayout.isRefreshing = false
-            }
+                        swipeRefreshLayout.isRefreshing = false
+                    }
 
-            override fun onFailure(call: Call<MutableList<PostResponse>>, t: Throwable) {
-                Log.d("Error api", t.message.toString())
-            }
+                    override fun onFailure(call: Call<MutableList<PostResponse>>, t: Throwable) {
+                        Log.d("Error api", t.message.toString())
+                    }
 
-        })
+                })
+        } else {
+            ApiClient.postService.getPosts(userIdRequest)
+                .enqueue(object : Callback<MutableList<PostResponse>> {
+                    override fun onResponse(
+                        call: Call<MutableList<PostResponse>>,
+                        response: Response<MutableList<PostResponse>>
+                    ) {
+                        Log.d("Respuesta del like", response.body().toString())
+                        if (response.isSuccessful) {
+                            val list = response.body()!!.asReversed()
+                            adapter.updateData(list)
+                        }
+
+                        swipeRefreshLayout.isRefreshing = false
+                    }
+
+                    override fun onFailure(call: Call<MutableList<PostResponse>>, t: Throwable) {
+                        Log.d("Error api", t.message.toString())
+                    }
+
+                })
+        }
     }
 
     private fun showCreatePostView(){
