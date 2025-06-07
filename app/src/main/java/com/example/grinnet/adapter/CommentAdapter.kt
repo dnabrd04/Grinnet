@@ -34,14 +34,14 @@ class CommentAdapter(
         holder.username.text = comment.user.username
         holder.text.text = comment.text
 
-        if (!comment.user.image.isNullOrEmpty()) {
+        /*if (!comment.user.image.isNullOrEmpty()) {
             Glide.with(context)
                 .load(comment.user.image)
                 .centerCrop()
                 .into(holder.userImage)
-        } else {
-            holder.userImage.setImageResource(R.drawable.account_icon)
-        }
+        } else {*/
+        holder.userImage.setImageResource(R.drawable.account_icon)
+        //}
     }
 
     override fun getItemCount(): Int {

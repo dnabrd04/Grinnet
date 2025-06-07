@@ -271,16 +271,16 @@ class UserProfileFragment : Fragment(), OnUserClickListener{
 
     fun showUnfollowDialog(context: Context, username: String, followerId: Long, followedId: Long) {
         val builder = AlertDialog.Builder(context)
-        builder.setTitle("¿Dejar de seguir a @$username?")
-        builder.setMessage("Ya no verás los tweets de @$username en tu línea de tiempo.")
+        builder.setTitle(getString(R.string.modalUnfollowTitle).replace("#", username))
+        builder.setMessage(getString(R.string.modalUnfollowMessage))
 
-        builder.setPositiveButton("Dejar de seguir") { dialog, _ ->
+        builder.setPositiveButton(getString(R.string.modalPositiveButton)) { dialog, _ ->
             unfollowUser(followerId, followedId)
             updateFragment()
             dialog.dismiss()
         }
 
-        builder.setNegativeButton("Cancelar") { dialog, _ ->
+        builder.setNegativeButton(getString(R.string.modalNegativeButton)) { dialog, _ ->
             dialog.dismiss()
         }
 

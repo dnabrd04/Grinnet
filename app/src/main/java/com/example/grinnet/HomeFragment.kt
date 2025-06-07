@@ -80,11 +80,8 @@ class HomeFragment : Fragment(), OnUserClickListener {
             ) {
                 Log.d("Respuesta del like", response.body().toString())
                 if(response.isSuccessful) {
-                    adapter.updateData(response.body()!!.asReversed())
-                    val list = response.body() as List<PostResponse>
-                    for(element in list) {
-                        Log.d("Respuesta del like", element.toString())
-                    }
+                    val list = response.body()!!.asReversed()
+                    adapter.updateData(list)
                 } else {
                     Log.d("Respuesta del like", response.errorBody().toString())
                 }

@@ -56,6 +56,9 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         val commentList = element.findViewById<RecyclerView>(R.id.commentList)
         val commentInput = element.findViewById<EditText>(R.id.commentInput)
         val senderCommentButton = element.findViewById<ImageButton>(R.id.sendCommentButton)
+        val relatedPostContainer = element.findViewById<LinearLayout>(R.id.relatedPostContainer)
+        val relatedPostUsername = element.findViewById<TextView>(R.id.relatedPostUsername)
+        val relatedPostText = element.findViewById<TextView>(R.id.relatedPostText)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -71,6 +74,7 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Log.d("PostAdapter", "onBindViewHolder position=$position")
+        holder.imageContainer.removeAllViews()
         val post = postList[position]
         holder.username.text = post.user.username
         holder.postContent.text = post.text
@@ -84,6 +88,31 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
         val format = DateTimeFormatter.ofPattern("d MMM yyyy", locale).withLocale(locale)
         val formattedDate = date.format(format)
         holder.publicationDate.text = formattedDate
+
+        Log.d("Post related", "Este es el post: ${post.toString()}")
+        if (post.postRelated?.idPost != null) {
+            holder.relatedPostContainer.visibility = View.VISIBLE
+            val dto = PostDTORequest(post.postRelated.idPost, Firebase.auth.uid ?: "")
+            ApiClient.postService.getPost(dto).enqueue(object : Callback<PostResponse> {
+                override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
+                    if (response.isSuccessful) {
+                        val originalPost = response.body()!!
+                        holder.relatedPostUsername.text = originalPost.user.username
+                        holder.relatedPostText.text = originalPost.text
+
+                        /*holder.relatedPostContainer.setOnClickListener {
+                            goCreatePostActivity(originalPost)
+                        }*/
+                    }
+                }
+
+                override fun onFailure(call: Call<PostResponse>, t: Throwable) {
+                    holder.relatedPostContainer.visibility = View.GONE
+                }
+            })
+        } else {
+            holder.relatedPostContainer.visibility = View.GONE
+        }
 
         if (post.resources != null && post.resources.isNotEmpty()) {
             holder.imageContainer.visibility = View.VISIBLE
@@ -233,8 +262,7 @@ class PostAdapter(private var postList: MutableList<PostResponse>, val context: 
     }
 
     fun updateData(newItems: List<PostResponse>) {
-        postList.clear()
-        postList.addAll(newItems)
+        postList = newItems.toMutableList()
         notifyDataSetChanged()
     }
 

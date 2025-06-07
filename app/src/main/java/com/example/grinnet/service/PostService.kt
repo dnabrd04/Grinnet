@@ -20,6 +20,9 @@ interface PostService {
     @POST("/post/with-likes")
     fun getPosts(@Body request: UserIdRequest): Call<MutableList<PostResponse>>
 
+    @POST("/posts-followed")
+    fun getPostsFollowed(@Body request: PostDTORequest): Call<MutableList<PostResponse>>
+
     @POST("/post/user-list-with-likes")
     fun getPostList(@Body request: PostListRequest): Call<MutableList<PostResponse>>
 }

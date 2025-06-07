@@ -24,10 +24,17 @@
     <string name="closeButton">⨉</string>
     <string name="publishButton">Publish</string>
     <string name="postTextHint">Type the text of the publication</string>
+    <string name="postImageError">You have reached the limit of 4 images</string>
+
     <string name="commentTextHint">Type the comment</string>
+
+    <string name="searchTextInformationText">Enter the name of the user you want to find</string>
+    <string name="searchTextNoCoincidences">No users were found with this data</string>
 
     <string name="followButton">Follow</string>
     <string name="followButton2">Following</string>
+    <string name="modalPositiveButton">Unfollow</string>
+    <string name="modalNegativeButton">Cancel</string>
     <string name="modalUnfollowTitle">Unfollow @#?</string>
     <string name="modalUnfollowMessage">You may no longer be able to see some of his posts.</string>
     <string name="followerText">Followers</string>

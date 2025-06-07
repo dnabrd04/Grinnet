@@ -57,6 +57,29 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical">
 
+                <LinearLayout
+                    android:id="@+id/relatedPostContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/lightGray"
+                    android:backgroundTint="@color/gray"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/relatedPostUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/relatedPostText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/postContentText"
                     android:layout_width="match_parent"

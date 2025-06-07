@@ -23,10 +23,17 @@
     <string name="closeButton">⨉</string>
     <string name="publishButton">Publicar</string>
     <string name="postTextHint">Escriba el texto de la publicación</string>
+    <string name="postImageError">Has alcanzado el límite de 4 imágenes</string>
+
     <string name="commentTextHint">Escriba el comentario</string>
+
+    <string name="searchTextInformationText">Escriba el nombre del usuario que desea encontrar</string>
+    <string name="searchTextNoCoincidences">No se encontro a ningun usuario con esos datos</string>
 
     <string name="followButton">Seguir</string>
     <string name="followButton2">Siguiendo</string>
+    <string name="modalPositiveButton">Dejar de seguir</string>
+    <string name="modalNegativeButton">Cancelar</string>
     <string name="modalUnfollowTitle">¿Dejar de seguir a @#?</string>
     <string name="modalUnfollowMessage">Es posible que ya no puedas ver algunos de sus posts.</string>
     <string name="followerText">Siguiendo</string>

@@ -81,13 +81,22 @@ class CreatePostActivity : AppCompatActivity() {
         }
 
         addImageButton.setOnClickListener {
-            openGallery()
+            if (resourceList.size >= 4) {
+                Toast.makeText(this, "Solo puedes subir hasta 4 imágenes", Toast.LENGTH_SHORT).show()
+            } else {
+                openGallery()
+            }
         }
     }
 
     private fun setGalleryLauncher() {
         pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
+                if (resourceList.size >= 4) {
+                    Toast.makeText(this, "Has alcanzado el límite de 4 imágenes", Toast.LENGTH_SHORT).show()
+                    return@registerForActivityResult
+                }
+                
                 val data: Intent? = result.data
                 val imageUri: Uri? = data?.data
                 if (imageUri != null) {

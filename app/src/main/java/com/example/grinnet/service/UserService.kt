@@ -27,4 +27,7 @@ interface UserService {
 
     @PUT("/user/image/{id}")
     fun updateUserImage(@Path("id") id: Long, @Body userImage: String): Call<UserResponse>
+
+    @GET("/user/search/{username}")
+    fun getUserByUsername(@Path("username") username: String): Call<MutableList<UserRequest>>
 }

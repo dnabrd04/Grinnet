@@ -93,6 +93,12 @@ class MainActivity : AppCompatActivity() {
                 .commit()
         }
 
+        val searchButton = findViewById<ImageView>(R.id.searchButton)
+
+        searchButton.setOnClickListener {
+            changeFragmentToSearch()
+        }
+
         notificationButton = findViewById<ImageView>(R.id.notificationButton)
 
         notificationButton.setOnClickListener {
@@ -142,6 +148,11 @@ class MainActivity : AppCompatActivity() {
         notificationButton.setImageResource(R.drawable.notification_none_icon)
     }
 
+    fun changeFragmentToSearch() {
+        val fragment = SearchFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerView, fragment).commit()
+    }
+
     fun changeFragmentToUserProfile(user: UserRequest) {
         val fragment = UserProfileFragment()
         val args = Bundle()
@@ -149,6 +160,7 @@ class MainActivity : AppCompatActivity() {
         fragment.arguments = args
         supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerView, fragment).commit()
     }
+
 
     fun checkNotifiationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
