@@ -95,7 +95,7 @@ class FormUserActivity : AppCompatActivity() {
      * Makes a post call to create the user.
      */
     private fun createUser(firebaseId: String, token: String) {
-        val user = UserRequest(null, "", editUsername.text.toString(), "public", firebaseId, token, editName.text.toString(), editDescription.text.toString())
+        val user = UserRequest(null, "", editUsername.text.toString().lowercase(), "public", firebaseId, token, editName.text.toString(), editDescription.text.toString())
         Log.d("", "Creando usuario $user")
         val call = ApiClient.userService.createUser(user)
         call.enqueue(object : Callback<UserRequest> {

@@ -82,7 +82,7 @@ class SearchFragment : Fragment(), OnUserClickListener {
     }
 
     fun searchUsername(username: String) {
-        val call = ApiClient.userService.getUserByUsername(username)
+        val call = ApiClient.userService.getUserByUsername(username.lowercase())
         
         call.enqueue(object : Callback<MutableList<UserRequest>> {
             override fun onResponse(call: Call<MutableList<UserRequest>>, response: Response<MutableList<UserRequest>>) {
